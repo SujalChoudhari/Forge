@@ -1,8 +1,4 @@
-use std::{
-    collections::{btree_map::Values, HashMap},
-    default, vec,
-};
-
+use std::{collections::HashMap, vec};
 use crate::logging::error;
 use yaml_rust::Yaml;
 
@@ -76,7 +72,6 @@ fn get_key_value_pairs(yaml: &Yaml, keyword: String) -> Option<HashMap<String, V
                             };
                             let variable_value = match value {
                                 Yaml::String(raw_str) => vec![raw_str],
-
                                 Yaml::Array(array) => {
                                     let mut value_array: Vec<String> = Vec::new();
                                     for value in array {
