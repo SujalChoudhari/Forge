@@ -1,12 +1,17 @@
-use crate::parser::{load_forge, yaml_to_object};
+use crate::parser::load_forge;
 
+pub mod interpreter;
 pub mod logging;
 pub mod parser;
 fn main() {
-    println!("Hello, world!");
-    let file_content = load_forge("./examples/forge.yaml");
-    let data = yaml_to_object(&file_content);
-
-    println!("{file_content}");
-    println!("{:?}", data);
+    let data = load_forge("./examples/forge");
+    let job = interpreter::get_job(data, "build".to_string());
+    let variables: std::collections::HashMap<String, Vec<String>> = interpreter::get_variables(&job);
+    let os = interpreter::get_operating_systems(&job);
+    let deps = interpreter::get_dependencies(&job);
+    let com = interpreter::get_commands(&job);
+    println!("{:?}",variables);
+    println!("{:?}",os);
+    println!("{:?}",deps);
+    println!("{:?}",com);
 }

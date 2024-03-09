@@ -1,0 +1,14 @@
+forge:
+  on: [Linux,Win]
+  detect: "*.rs"
+  vars:
+    cc: gcc
+  run:
+    - Linux
+    - echo this is linux {cc}
+    - Win
+    - echo this is win {cc}
+
+build:
+  on: Linux
+  run: gcc {changedFiles}

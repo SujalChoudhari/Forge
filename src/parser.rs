@@ -4,15 +4,25 @@ use yaml_rust::{Yaml, YamlLoader};
 
 use crate::logging::error;
 
-pub fn load_forge(file_path: &str) -> String {
+pub fn load_forge(filename: &str) -> Yaml {
+    let contents = load_contents_of_file(filename);
+    parse_string_into_objects(&contents)
+}
+
+fn load_contents_of_file(file_path: &str) -> String {
     let res: Result<String, std::io::Error> = fs::read_to_string(file_path);
     let data: String;
     match res {
         Ok(val) => {
-            data = val;
+            data = val.to_string();
+            if val.len() > 0 {
+            } else {
+                error("Forge is empty");
+            }
         }
         Err(_) => {
-            error("Cannot read Forge file.");
+            let printable_path = file_path;
+            error(&["Cannot open the \"", printable_path, "\" file"].concat());
             data = String::new();
         }
     };
@@ -20,7 +30,7 @@ pub fn load_forge(file_path: &str) -> String {
     data
 }
 
-pub fn yaml_to_object(file_contents: &String) -> Yaml {
+fn parse_string_into_objects(file_contents: &String) -> Yaml {
     let content = YamlLoader::load_from_str(file_contents);
     let data;
     match content {
@@ -33,9 +43,4 @@ pub fn yaml_to_object(file_contents: &String) -> Yaml {
         }
     };
     data
-}
-
-pub fn load_yaml_from_filename(filename: &str) -> Yaml {
-    let contents = load_forge(filename);
-    yaml_to_object(&contents)
 }
