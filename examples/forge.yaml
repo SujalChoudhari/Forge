@@ -1,0 +1,25 @@
+forge:
+  on: Win
+  detect:
+    - "*.js"
+  vars:
+    flag: 
+    - -v
+    - -f
+    - -g
+  run:
+    - "dir"
+    - "ipconfig {flag}" # runs with each flag
+
+forge_l:
+  on: Linux
+  detect:
+    - "*.js"
+  vars:
+    flag: 
+    - -v
+    - -f
+    - -g
+  run:
+    - "ls"
+    - "ifconfig {flag}" # runs with each flag
