@@ -1,5 +1,5 @@
 use argparser::load_command_line_arguents;
-use variables::{Variables};
+use variables::Variables;
 
 use crate::{commander::execute, parser::load_forge};
 
@@ -13,8 +13,7 @@ pub mod variables;
 fn main() {
     let data = load_forge("./examples/forge");
     let job = interpreter::get_job(data, "forge".to_string());
-    let vars: std::collections::HashMap<String, Vec<String>> =
-        interpreter::get_variables(&job);
+    let vars: std::collections::HashMap<String, Vec<String>> = interpreter::get_variables(&job);
     let os = interpreter::get_operating_systems(&job);
     let deps = interpreter::get_dependencies(&job);
     let com = interpreter::get_commands(&job);
@@ -46,5 +45,7 @@ fn main() {
         println!("Key '{}' does not exist", non_existent_key);
     }
 
-    println!("{:?}",variables);
+    
+    let out = variables.replace_all_keys(vec!["this is {fs} {cc}".to_string(),"this is {cc} {fs}".to_string()]);
+    println!("{:?}", out);
 }
