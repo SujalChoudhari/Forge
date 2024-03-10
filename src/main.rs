@@ -1,51 +1,34 @@
 use argparser::load_command_line_arguents;
+use filehandler::get_all_files_in_directory;
 use variables::Variables;
 
-use crate::{commander::execute, parser::load_forge};
+use crate::{
+    commander::execute,
+    filehandler::{
+        did_other_files_changed, get_files_in_directory_with_criteria, get_last_modified_of_files, update_last_modified_of_files,
+    },
+    parser::load_forge,
+};
 
 pub mod argparser;
 pub mod commander;
+pub mod filehandler;
 pub mod interpreter;
 pub mod logging;
 pub mod parser;
 pub mod variables;
 
 fn main() {
-    let data = load_forge("./examples/forge");
-    let job = interpreter::get_job(data, "forge".to_string());
-    let vars: std::collections::HashMap<String, Vec<String>> = interpreter::get_variables(&job);
-    let os = interpreter::get_operating_systems(&job);
-    let deps = interpreter::get_dependencies(&job);
-    let com = interpreter::get_commands(&job);
-    println!("{:?}", vars);
-    println!("{:?}", os);
-    println!("{:?}", deps);
-    println!("{:?}", com);
-    load_command_line_arguents();
-    let _out = execute(&"tree ./src ".to_string());
-    // println!("{}",out);
+    let out = get_files_in_directory_with_criteria("./", &["src/".to_string()]);
+    let last_mod = get_last_modified_of_files(&out);
+    let has_changed = did_other_files_changed(
+        get_files_in_directory_with_criteria("./", &["*.forge".to_string()])
+            .get(0)
+            .unwrap()
+            .to_owned(),
+        out,
+    );
 
-    let mut variables = Variables::new();
-
-    variables.add(String::from("names"), String::from("John"));
-    variables.add(String::from("names"), String::from("Alice"));
-    variables.add_from_hash(&vars);
-    let names = variables.get(&String::from("names"));
-    match names {
-        Some(values) => {
-            println!("Values for 'names': {:?}", values);
-        }
-        None => println!("Key 'names' not found"),
-    }
-
-    let non_existent_key = String::from("non_existent_key");
-    if variables.exists(&non_existent_key) {
-        println!("Key '{}' exists", non_existent_key);
-    } else {
-        println!("Key '{}' does not exist", non_existent_key);
-    }
-
-    
-    let out = variables.format_templates(vec!["this is {$fs}{fs} {cc}".to_string(),"this is {cc} {fs}".to_string()]);
-    println!("{:?}", out);
+    update_last_modified_of_files(get_files_in_directory_with_criteria("./", &["*.forge".to_string()]));
+    println!("{:?}", has_changed);
 }

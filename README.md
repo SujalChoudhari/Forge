@@ -1,2 +1,2 @@
 # Forge
-A Make alternative in Rust.
+A GNU Make alternative in Rust.
