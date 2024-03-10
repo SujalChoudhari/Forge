@@ -39,23 +39,59 @@ impl Variables {
         self.memory.contains_key(key)
     }
 
-    pub fn replace_key(&self, input_strings: Vec<String>, key_to_replace: &str) -> Vec<String> {
+    fn replace_key_with_index(
+        &self,
+        input_string: String,
+        key_to_replace: &str,
+        result: &mut Vec<String>,
+    ) {
+        // Iterate over each value of the key
+        if let Some(values) = self.memory.get(key_to_replace) {
+            for value in values {
+                // Replace the key_to_replace with the actual value
+                let index_of_value = match values.binary_search(value) {
+                    Result::Ok(ok) => ok,
+                    Result::Err(err) => err,
+                };
+                let replaced_string = input_string
+                    .replace(
+                        &["{$", key_to_replace, "}"].concat(),
+                        &index_of_value.to_string(),
+                    )
+                    .replace(&["{", key_to_replace, "}"].concat(), value);
+                // Add the replaced string to the result vector
+                result.push(replaced_string);
+            }
+        }
+    }
+
+    fn replace_key_with_value(
+        &self,
+        input_string: String,
+        key_to_replace: &str,
+        result: &mut Vec<String>,
+    ) {
+        // Iterate over each value of the key
+        if let Some(values) = self.memory.get(key_to_replace) {
+            for value in values {
+                // Replace the key_to_replace with the actual value
+                let replaced_string =
+                    input_string.replace(&["{", key_to_replace, "}"].concat(), value);
+                // Add the replaced string to the result vector
+                result.push(replaced_string);
+            }
+        }
+    }
+
+    fn replace_key(&self, input_strings: Vec<String>, key_to_replace: &str) -> Vec<String> {
         let mut result = Vec::new();
         for input_string in input_strings {
             // Check if the key_to_replace is present in the input string
-            if input_string.contains(key_to_replace) {
-                // Iterate over each value of the key
-                if let Some(values) = self.memory.get(key_to_replace) {
-                    for value in values {
-                        // Replace the key_to_replace with the actual value
-                        let replaced_string =
-                            input_string.replace(&["{", key_to_replace, "}"].concat(), value);
-                        // Add the replaced string to the result vector
-                        result.push(replaced_string);
-                    }
-                }
+            if input_string.contains(&["$", key_to_replace].concat()) {
+                self.replace_key_with_index(input_string, key_to_replace, &mut result);
+            } else if input_string.contains(key_to_replace) {
+                self.replace_key_with_value(input_string, key_to_replace, &mut result);
             } else {
-                // If key_to_replace is not found, add the input string as is to the result
                 result.push(input_string);
             }
         }
@@ -63,7 +99,7 @@ impl Variables {
         result
     }
 
-    pub fn replace_all_keys(&self, mut input_strings: Vec<String>) -> Vec<String> {
+    pub fn format_templates(&self, mut input_strings: Vec<String>) -> Vec<String> {
         // Create a BTreeMap to store keys sorted by the length of their values
         let mut sorted_keys: BTreeMap<usize, &String> = BTreeMap::new();
 

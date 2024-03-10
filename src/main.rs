@@ -22,7 +22,7 @@ fn main() {
     println!("{:?}", deps);
     println!("{:?}", com);
     load_command_line_arguents();
-    let out = execute(&"tree ./src ".to_string());
+    let _out = execute(&"tree ./src ".to_string());
     // println!("{}",out);
 
     let mut variables = Variables::new();
@@ -46,6 +46,6 @@ fn main() {
     }
 
     
-    let out = variables.replace_all_keys(vec!["this is {fs} {cc}".to_string(),"this is {cc} {fs}".to_string()]);
+    let out = variables.format_templates(vec!["this is {$fs}{fs} {cc}".to_string(),"this is {cc} {fs}".to_string()]);
     println!("{:?}", out);
 }
