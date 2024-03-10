@@ -13,6 +13,13 @@ pub fn error(message: &str) {
     log(LogType::ERROR, message);
 }
 
+pub fn start() {
+    let title = " FORGE ".black().bold().on_bright_cyan();
+    let message = "Thanks for using forge.\n\n".truecolor(90, 90, 90).italic();
+    println!(" {} ", title);
+    println!(" {} ", message);
+}
+
 pub fn warn(message: &str) {
     log(LogType::WARN, message);
 }

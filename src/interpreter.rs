@@ -7,7 +7,7 @@ pub fn get_job(yaml: Yaml, job_name: String) -> Yaml {
         Yaml::Hash(map) => {
             if map.contains_key(&Yaml::String(job_name.to_owned())) {
                 map[&Yaml::String(job_name.to_owned())].clone()
-            } else {
+            } else { 
                 error(&["Job \"", &job_name, "\" does not exist."].concat());
                 Yaml::Null
             }

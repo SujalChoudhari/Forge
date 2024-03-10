@@ -28,14 +28,14 @@ pub fn get_all_files_in_directory<P: AsRef<Path>>(path: P) -> Vec<PathBuf> {
 
 pub fn get_files_in_directory_with_criteria<P: AsRef<Path>>(
     path: P,
-    criteria: &[String],
+    criteria: &Vec<String>,
 ) -> Vec<PathBuf> {
     let mut files = Vec::new();
 
     let paths = get_all_files_in_directory(path);
 
     for path in paths {
-        if is_path_matched(&path, criteria) {
+        if is_path_matched(&path, &criteria) {
             files.push(path);
         }
     }
@@ -43,7 +43,7 @@ pub fn get_files_in_directory_with_criteria<P: AsRef<Path>>(
     files
 }
 
-fn is_path_matched(path: &PathBuf, criteria: &[String]) -> bool {
+fn is_path_matched(path: &PathBuf, criteria: &Vec<String>) -> bool {
     for c in criteria {
         let is_match = match c.as_str() {
             // all
@@ -92,19 +92,26 @@ pub fn get_last_modified_of_files<P: AsRef<Path>>(paths: &[P]) -> Vec<SystemTime
 // update the last modified date of the given files
 pub fn update_last_modified_of_files<P: AsRef<Path>>(paths: Vec<P>) {
     for path in paths {
-        set_file_mtime(path, FileTime::now()).unwrap();
+        set_file_mtime(path, FileTime::from_unix_time(0,0)).unwrap();
     }
 }
 
-pub fn did_other_files_changed<P: AsRef<Path>>(main_comparor: P, other_file_paths: Vec<P>) -> bool {
-    let main_modified_time = get_last_modified_of_files(&[main_comparor])[0];
+pub fn get_changed_files<P: AsRef<Path>>(file_paths: Vec<P>) -> Vec<P> {
+    let mut changed_files = Vec::new();
 
-    for second_path in other_file_paths {
-        let second_modified_time = get_last_modified_of_files(&[second_path])[0];
-        if second_modified_time > main_modified_time {
-            return true;
+    for path in file_paths {
+        let metadata = match fs::metadata(&path) {
+            Ok(data) => data,
+            Err(_) => continue,
+        };
+
+        let current_modified_time = metadata.modified().unwrap();
+        let zero_modified_time = FileTime::from_unix_time(0,0);
+
+        if FileTime::from_system_time(current_modified_time) != zero_modified_time {
+            changed_files.push(path);
         }
     }
 
-    false
+    changed_files
 }
