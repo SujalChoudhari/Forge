@@ -3,6 +3,7 @@ forge:
   detect: "*.rs"
   vars:
     cc: gcc
+    fs: [f1,f2,f3]
   run:
     - Linux
     - echo this is linux {cc}
