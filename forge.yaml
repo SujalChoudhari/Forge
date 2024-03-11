@@ -1,0 +1,15 @@
+forge:
+  on: [Linux,Win]
+  detect: "*.rs"
+  vars:
+    cc: gcc
+  run:
+    - Linux
+    - echo this is linux {cc}
+    - Win
+    - echo this is win {changedFile}{fs} - {$fs}
+
+build:
+  on: Win
+  detect: "*.rs"
+  run: echo {fileName} {fileNameExt}

@@ -111,11 +111,45 @@ impl Variables {
             }
         }
 
+        let mut special_vars_formatted_strings: Vec<String> = vec![];
+        for string in &input_strings {
+            special_vars_formatted_strings.extend(self.replace_special_vars(string));
+        }
         // Iterate over sorted keys and apply replacements
         for (_, key) in sorted_keys {
-            input_strings = self.replace_key(input_strings, key);
+            special_vars_formatted_strings = self.replace_key(special_vars_formatted_strings, key);
         }
 
-        input_strings
+        special_vars_formatted_strings
+    }
+
+    fn replace_special_vars(&self, input_string: &String) -> Vec<String> {
+        let mut modified_string: Vec<String> = vec![];
+        for i in 0..self.memory.get("filePath").unwrap().len() {
+            let mut command = input_string.to_owned();
+
+            command = command.replace(
+                "{fileName}",
+                &self.memory.get("fileName").unwrap().get(i).unwrap(),
+            );
+            command = command.replace(
+                "{filePath}",
+                &self.memory.get("filePath").unwrap().get(i).unwrap(),
+            );
+            command = command.replace(
+                "{fileDir}",
+                &self.memory.get("fileDir").unwrap().get(i).unwrap(),
+            );
+            command = command.replace(
+                "{fileNameExt}",
+                &self.memory.get("fileNameExt").unwrap().get(i).unwrap(),
+            );
+            command = command.replace(
+                "{fileExt}",
+                &self.memory.get("fileExt").unwrap().get(i).unwrap(),
+            );
+            modified_string.push(command);
+        }
+        modified_string
     }
 }
