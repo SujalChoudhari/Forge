@@ -1,5 +1,11 @@
+use crate::{
+    constants::{
+        COMMANDS_KEY, DEFAULT_DETECT_PATTERN, DETECT_KEY, LINUX_STRING, MAC_STRING, OS_KEY,
+        RUN_ONCE_KEY, VARIABLES_KEY, WIN_STRING,
+    },
+    logging::error,
+};
 use std::{collections::HashMap, vec};
-use crate::logging::error;
 use yaml_rust::Yaml;
 
 pub fn get_job(yaml: Yaml, job_name: String) -> Yaml {
@@ -7,7 +13,7 @@ pub fn get_job(yaml: Yaml, job_name: String) -> Yaml {
         Yaml::Hash(map) => {
             if map.contains_key(&Yaml::String(job_name.to_owned())) {
                 map[&Yaml::String(job_name.to_owned())].clone()
-            } else { 
+            } else {
                 error(&["Job \"", &job_name, "\" does not exist."].concat());
                 Yaml::Null
             }
@@ -21,23 +27,50 @@ pub fn get_job(yaml: Yaml, job_name: String) -> Yaml {
 }
 
 pub fn get_operating_systems(yaml: &Yaml) -> Vec<String> {
-    if let Some(result) = get_list_or_string(yaml, "on".to_string()) {
-        result
+    if let Some(result) = get_list_or_string(yaml, OS_KEY.to_string()) {
+        result.iter().map(|str| str.to_lowercase()).collect()
     } else {
-        vec!["Linux".to_string(), "Win".to_string(), "Mac".to_string()]
+        vec![
+            LINUX_STRING.to_string(),
+            WIN_STRING.to_string(),
+            MAC_STRING.to_string(),
+        ]
     }
 }
 
 pub fn get_dependencies(yaml: &Yaml) -> Vec<String> {
-    if let Some(result) = get_list_or_string(yaml, "detect".to_string()) {
+    if let Some(result) = get_list_or_string(yaml, DETECT_KEY.to_string()) {
         result
     } else {
-        vec!["*".to_string()]
+        vec![DEFAULT_DETECT_PATTERN.to_string()]
     }
 }
 
+pub fn get_run_once(yaml: &Yaml) -> bool {
+    match yaml {
+        Yaml::Hash(map) => {
+            if map.contains_key(&Yaml::String(RUN_ONCE_KEY.to_owned())) {
+                let value_map = map[&Yaml::String(RUN_ONCE_KEY.to_owned())].to_owned();
+                match value_map {
+                    // if value map exists
+                    Yaml::Boolean(boolean) => {
+                        return boolean;
+                    },
+                    _ => error(&["Non Boolean found in \"", &RUN_ONCE_KEY, "\""].concat()),
+                }
+            } else {
+                return false;
+            }
+        }
+        _ => {
+            return false;
+        }
+    };
+    false
+}
+
 pub fn get_commands(yaml: &Yaml) -> Vec<String> {
-    if let Some(result) = get_list_or_string(yaml, "run".to_string()) {
+    if let Some(result) = get_list_or_string(yaml, COMMANDS_KEY.to_string()) {
         result
     } else {
         vec![]
@@ -45,7 +78,7 @@ pub fn get_commands(yaml: &Yaml) -> Vec<String> {
 }
 
 pub fn get_variables(yaml: &Yaml) -> HashMap<String, Vec<String>> {
-    if let Some(result) = get_key_value_pairs(yaml, "vars".to_string()) {
+    if let Some(result) = get_key_value_pairs(yaml, VARIABLES_KEY.to_string()) {
         result
     } else {
         let result: HashMap<String, Vec<String>> = HashMap::new();

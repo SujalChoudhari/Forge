@@ -1,4 +1,4 @@
-use std::{fs::File, path::PathBuf, time::SystemTime, vec};
+use std::path::PathBuf;
 
 use filetime::FileTime;
 use yaml_rust::Yaml;
@@ -6,11 +6,12 @@ use yaml_rust::Yaml;
 use crate::{
     argparser::{load_command_line_arguents, Arguments},
     commander::execute,
+    constants::*,
     filehandler::{
         get_changed_files, get_files_in_directory_with_criteria, get_last_modified_of_files,
         update_last_modified_of_files,
     },
-    interpreter::{get_commands, get_dependencies, get_job, get_operating_systems, get_variables},
+    interpreter::{get_commands, get_dependencies, get_job, get_operating_systems, get_run_once, get_variables},
     logging::info,
     parser::load_forge,
     variables::Variables,
@@ -33,18 +34,18 @@ impl Forger {
         // load arguments
         Forger {
             arguments: load_command_line_arguents(),
-            forge_file_path: "./forge.yaml".to_string(),
+            forge_file_path: APP_FILENAME_DEFAULT_PATH.to_string(),
             variables: Variables::new(),
             job: Yaml::Null,
             changed_file_paths: vec![],
             commands_to_run: vec![],
             can_run_job: true,
             os: if cfg!(target_os = "windows") {
-                "Win".to_string()
+                WIN_STRING.to_string()
             } else if cfg!(target_os = "macos") {
-                "Mac".to_string()
+                MAC_STRING.to_string()
             } else {
-                "Linux".to_owned()
+                LINUX_STRING.to_owned()
             },
         }
     }
@@ -57,7 +58,7 @@ impl Forger {
         let receipe_name: String = if self.arguments.nameless.len() >= 2 {
             self.arguments.nameless.get(1).unwrap().to_string()
         } else {
-            "forge.yaml".to_string()
+            DEFAULT_RECIPE.to_string()
         };
 
         // extract the needed recipe
@@ -67,10 +68,10 @@ impl Forger {
         let detectable_files_from_user = get_dependencies(&self.job);
         if self.is_forge_updated() {
             self.changed_file_paths =
-                get_files_in_directory_with_criteria("./", &detectable_files_from_user);
+                get_files_in_directory_with_criteria(DEFALUT_DIR, &detectable_files_from_user);
         } else {
             self.changed_file_paths = get_changed_files(get_files_in_directory_with_criteria(
-                "./",
+                DEFALUT_DIR,
                 &detectable_files_from_user,
             ));
         }
@@ -94,6 +95,11 @@ impl Forger {
                 .concat(),
             );
             self.can_run_job = false;
+        }
+        if get_run_once(&self.job) {
+            self.can_run_job = false;
+            self.run_once();
+            self.quench();
         }
 
         let names: Vec<String> = self
@@ -141,13 +147,17 @@ impl Forger {
             .collect();
 
         self.variables
-            .add_vec("filePath".to_string(), relative_path);
-        self.variables.add_vec("fileName".to_string(), names);
+            .add_vec(FILE_PATH_VARIABLE_NAME.to_string(), relative_path);
         self.variables
-            .add_vec("fileNameExt".to_string(), names_with_extension);
+            .add_vec(FILE_NAME_VARIABLE_NAME.to_string(), names);
+        self.variables.add_vec(
+            FILE_NAME_EXT_VARIABLE_NAME.to_string(),
+            names_with_extension,
+        );
         self.variables
-            .add_vec("fileDir".to_string(), parent_directories);
-        self.variables.add_vec("fileExt".to_string(), extensions);
+            .add_vec(FILE_DIR_VARIABLE_NAME.to_string(), parent_directories);
+        self.variables
+            .add_vec(FILE_EXT_VARIABLE_NAME.to_string(), extensions);
 
         // get the commands to run
         self.commands_to_run = get_commands(&self.job);
@@ -163,7 +173,8 @@ impl Forger {
         // save the declared in vars
         self.variables.add_from_hash(&get_variables(&self.job));
         // add the default args
-        self.variables.add("os".to_string(), self.os.to_string());
+        self.variables
+            .add(OS_VARIABLE_NAME.to_string(), self.os.to_string());
     }
 
     pub fn forge(&mut self) {
@@ -174,12 +185,12 @@ impl Forger {
         let mut current_os = self.os.to_owned();
         let mut cleaned_commands_to_run: Vec<String> = vec![];
         for command in &self.commands_to_run {
-            if command == "Linux" {
-                current_os = "Linux".to_string();
-            } else if command == "Win" {
-                current_os = "Win".to_string();
-            } else if command == "Mac" {
-                current_os = "Mac".to_string();
+            if command.to_lowercase() == LINUX_STRING {
+                current_os = LINUX_STRING.to_string();
+            } else if command.to_lowercase() == WIN_STRING {
+                current_os = WIN_STRING.to_string();
+            } else if command.to_lowercase() == MAC_STRING {
+                current_os = MAC_STRING.to_string();
             } else {
                 if current_os == self.os {
                     cleaned_commands_to_run.push(command.to_string());
@@ -198,13 +209,20 @@ impl Forger {
         }
     }
 
+    pub fn run_once(&mut self) {
+        self.commands_to_run = get_commands(&self.job);
+        for command in &self.commands_to_run {
+            let _out: Result<String, String> = execute(command);
+        }
+    }
+
     pub fn quench(&mut self) {
         if !self.can_run_job {
             return;
         };
 
         if self.is_forge_updated() {
-            update_last_modified_of_files(vec!["forge.yaml"]);
+            update_last_modified_of_files(vec![APP_FILENAME]);
         }
         // set the time to 0 for changed files
         update_last_modified_of_files(self.changed_file_paths.to_owned());
@@ -212,7 +230,7 @@ impl Forger {
 
     fn is_forge_updated(&self) -> bool {
         !FileTime::from_system_time(
-            get_last_modified_of_files(&[&"forge.yaml"])
+            get_last_modified_of_files(&[&APP_FILENAME])
                 .get(0)
                 .unwrap()
                 .to_owned(),

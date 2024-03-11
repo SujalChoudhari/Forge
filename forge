@@ -13,3 +13,12 @@ build:
   on: Win
   detect: "*.rs"
   run: echo {fileName} {fileNameExt}
+
+commit:
+  on: all
+  once: true
+  run:
+  - dir
+  - git add -A
+  - git commit -m "{message}"
+  - git push

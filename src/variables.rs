@@ -1,5 +1,11 @@
 use std::collections::{BTreeMap, HashMap};
 
+use crate::constants::{
+    FILE_DIR_VARIABLE_NAME, FILE_EXT_VARIABLE_NAME, FILE_NAME_EXT_VARIABLE_NAME,
+    FILE_NAME_VARIABLE_NAME, FILE_PATH_VARIABLE_NAME, VARIABLE_REPLACE_TEMPLATE,
+    VARIABLE_REPLACE_WITH_INDEX_TEMPLATE,
+};
+
 #[derive(Debug)]
 pub struct Variables {
     memory: HashMap<String, Vec<String>>,
@@ -55,10 +61,23 @@ impl Variables {
                 };
                 let replaced_string = input_string
                     .replace(
-                        &["{$", key_to_replace, "}"].concat(),
+                        &[
+                            VARIABLE_REPLACE_WITH_INDEX_TEMPLATE.0,
+                            key_to_replace,
+                            VARIABLE_REPLACE_WITH_INDEX_TEMPLATE.1,
+                        ]
+                        .concat(),
                         &index_of_value.to_string(),
                     )
-                    .replace(&["{", key_to_replace, "}"].concat(), value);
+                    .replace(
+                        &[
+                            VARIABLE_REPLACE_TEMPLATE.0,
+                            key_to_replace,
+                            VARIABLE_REPLACE_TEMPLATE.1,
+                        ]
+                        .concat(),
+                        value,
+                    );
                 // Add the replaced string to the result vector
                 result.push(replaced_string);
             }
@@ -75,8 +94,16 @@ impl Variables {
         if let Some(values) = self.memory.get(key_to_replace) {
             for value in values {
                 // Replace the key_to_replace with the actual value
-                let replaced_string =
-                    input_string.replace(&["{", key_to_replace, "}"].concat(), value);
+                let replaced_string = input_string.replace(
+                    &[
+                        VARIABLE_REPLACE_TEMPLATE.0,
+                        key_to_replace,
+                        VARIABLE_REPLACE_TEMPLATE.1,
+                    ]
+                    .concat(),
+                    value,
+                );
+
                 // Add the replaced string to the result vector
                 result.push(replaced_string);
             }
@@ -87,7 +114,9 @@ impl Variables {
         let mut result = Vec::new();
         for input_string in input_strings {
             // Check if the key_to_replace is present in the input string
-            if input_string.contains(&["$", key_to_replace].concat()) {
+            if input_string
+                .contains(&[VARIABLE_REPLACE_WITH_INDEX_TEMPLATE.0, key_to_replace].concat())
+            {
                 self.replace_key_with_index(input_string, key_to_replace, &mut result);
             } else if input_string.contains(key_to_replace) {
                 self.replace_key_with_value(input_string, key_to_replace, &mut result);
@@ -99,7 +128,7 @@ impl Variables {
         result
     }
 
-    pub fn format_templates(&self, mut input_strings: Vec<String>) -> Vec<String> {
+    pub fn format_templates(&self, input_strings: Vec<String>) -> Vec<String> {
         // Create a BTreeMap to store keys sorted by the length of their values
         let mut sorted_keys: BTreeMap<usize, &String> = BTreeMap::new();
 
@@ -125,29 +154,64 @@ impl Variables {
 
     fn replace_special_vars(&self, input_string: &String) -> Vec<String> {
         let mut modified_string: Vec<String> = vec![];
-        for i in 0..self.memory.get("filePath").unwrap().len() {
+        for i in 0..self.memory.get(FILE_PATH_VARIABLE_NAME).unwrap().len() {
             let mut command = input_string.to_owned();
 
-            command = command.replace(
-                "{fileName}",
-                &self.memory.get("fileName").unwrap().get(i).unwrap(),
-            );
-            command = command.replace(
-                "{filePath}",
-                &self.memory.get("filePath").unwrap().get(i).unwrap(),
-            );
-            command = command.replace(
-                "{fileDir}",
-                &self.memory.get("fileDir").unwrap().get(i).unwrap(),
-            );
-            command = command.replace(
-                "{fileNameExt}",
-                &self.memory.get("fileNameExt").unwrap().get(i).unwrap(),
-            );
-            command = command.replace(
-                "{fileExt}",
-                &self.memory.get("fileExt").unwrap().get(i).unwrap(),
-            );
+            if command.contains(FILE_NAME_VARIABLE_NAME) {
+                command = command.replace(
+                    &["{", FILE_NAME_VARIABLE_NAME, "}"].concat(),
+                    &self
+                        .memory
+                        .get(FILE_NAME_VARIABLE_NAME)
+                        .unwrap()
+                        .get(i)
+                        .unwrap(),
+                );
+            }
+            if command.contains(FILE_PATH_VARIABLE_NAME) {
+                command = command.replace(
+                    &["{", FILE_PATH_VARIABLE_NAME, "}"].concat(),
+                    &self
+                        .memory
+                        .get(FILE_PATH_VARIABLE_NAME)
+                        .unwrap()
+                        .get(i)
+                        .unwrap(),
+                );
+            }
+            if command.contains(FILE_DIR_VARIABLE_NAME) {
+                command = command.replace(
+                    &["{", FILE_DIR_VARIABLE_NAME, "}"].concat(),
+                    &self
+                        .memory
+                        .get(FILE_DIR_VARIABLE_NAME)
+                        .unwrap()
+                        .get(i)
+                        .unwrap(),
+                );
+            }
+            if command.contains(FILE_NAME_EXT_VARIABLE_NAME) {
+                command = command.replace(
+                    &["{", FILE_NAME_EXT_VARIABLE_NAME, "}"].concat(),
+                    &self
+                        .memory
+                        .get(FILE_NAME_EXT_VARIABLE_NAME)
+                        .unwrap()
+                        .get(i)
+                        .unwrap(),
+                );
+            }
+            if command.contains(FILE_EXT_VARIABLE_NAME) {
+                command = command.replace(
+                    &["{", FILE_EXT_VARIABLE_NAME, "}"].concat(),
+                    &self
+                        .memory
+                        .get(FILE_EXT_VARIABLE_NAME)
+                        .unwrap()
+                        .get(i)
+                        .unwrap(),
+                );
+            }
             modified_string.push(command);
         }
         modified_string

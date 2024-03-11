@@ -1,4 +1,5 @@
 use forger::Forger;
+use interpreter::get_run_once;
 use logging::start;
 
 pub mod argparser;
@@ -9,6 +10,7 @@ pub mod interpreter;
 pub mod logging;
 pub mod parser;
 pub mod variables;
+pub mod constants;
 
 fn main() {
     start();
