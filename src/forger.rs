@@ -96,11 +96,7 @@ impl Forger {
             );
             self.can_run_job = false;
         }
-        if get_run_once(&self.job) {
-            self.can_run_job = false;
-            self.run_once();
-            self.quench();
-        }
+
 
         let names: Vec<String> = self
             .changed_file_paths
@@ -181,6 +177,10 @@ impl Forger {
         if !self.can_run_job {
             return;
         };
+        if get_run_once(&self.job){
+            self.run_once();
+            return;
+        }
         // clean templates
         let mut current_os = self.os.to_owned();
         let mut cleaned_commands_to_run: Vec<String> = vec![];
