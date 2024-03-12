@@ -19,8 +19,11 @@ hack: # major feilds are optional
 commit:
   always: true
   run:
+  - linux
   - echo add -A
+  - mac
   - echo commit -m {message} # can declare message as `forge commit --message="Testing"` if not it will be asked during execution.
+  - win
   - echo push
 
 mac_only:

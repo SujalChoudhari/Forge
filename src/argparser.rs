@@ -1,33 +1,47 @@
 use std::collections::HashMap;
+
 #[derive(Debug)]
+/// Container to store all the arguments entered.
+///
+/// ### Properties
+/// - `nameless`: `Vec<String>` - A vector to store nameless arguments.
+/// - `flags`: `Vec<String>` - A vector to store flags.
+/// - `keyword_arguments`: `HashMap<String, Vec<String>>` - A hashmap to store keyword arguments.
 pub struct Arguments {
     pub nameless: Vec<String>,
     pub flags: Vec<String>,
-    pub keword_arguments: HashMap<String, Vec<String>>,
+    pub keyword_arguments: HashMap<String, Vec<String>>,
 }
 
-pub fn load_command_line_arguents() -> Arguments {
+/// Parses command line arguments using [std::env::args].
+///
+/// #### Complexity
+/// - O(n) where `n` is the number of command line arguments.
+///
+/// #### Returns
+/// - [Arguments]: An instance of the [Arguments] struct containing parsed command line arguments.
+pub fn load_command_line_arguments() -> Arguments {
     let mut args = Arguments {
         nameless: Vec::new(),
         flags: Vec::new(),
-        keword_arguments: HashMap::new(),
+        keyword_arguments: HashMap::new(),
     };
 
-    for individual_args in std::env::args() {
-        if individual_args.starts_with("--") {
-            // keyword
-            if let Some(split_args) = individual_args.split_once("=") {
-                args.keword_arguments.insert(
-                    split_args.0.replace("--", "").to_owned(),
-                    vec![split_args.1.to_owned()],
-                );
+    for individual_arg in std::env::args() {
+        if individual_arg.starts_with("--") {
+            // keyword argument
+            if let Some((keyword, value)) = individual_arg.split_once("=") {
+                args.keyword_arguments
+                    .entry(keyword.trim_start_matches("--").to_owned())
+                    .or_insert_with(Vec::new)
+                    .push(value.to_owned());
             }
-        } else if individual_args.starts_with("-") {
-            // flags
-            args.flags.push(individual_args.replace("-", ""));
+        } else if individual_arg.starts_with("-") {
+            // flag
+            args.flags.push(individual_arg.trim_start_matches("-").to_owned());
         } else {
-            // nameless arg
-            args.nameless.push(individual_args);
+            // nameless argument
+            args.nameless.push(individual_arg);
         }
     }
     args

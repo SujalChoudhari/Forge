@@ -3,6 +3,21 @@ use std::string::String;
 
 use crate::logging::{error, intermidiate_error, intermidiate_info, warn};
 
+/// Executes the given command on the current operating system.
+/// This function is platform-independent.
+///
+/// #### Parameters
+/// - `command`: &[str] - The command to execute. This can be a shell command, system command, etc.
+///
+/// #### Complexity
+/// - O(m)
+///   - Where `m` is the complexity of the provided command, typically influenced by its length.
+///
+/// #### Returns
+/// - `Result<(String, String), String>`: A tuple containing the standard output and standard error of the command execution. 
+///   - `Ok((stdout, stderr))`: If the command executed successfully, `stdout` contains the standard output, and `stderr` contains the standard error (if any).
+///   - `Err(error_message)`: If an error occurred during command execution, `error_message` provides details about the failure.
+
 pub fn execute(command: &str) -> Result<String, String> {
     let mut is_error = false;
     let command_result = if cfg!(target_os = "windows") {

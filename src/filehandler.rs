@@ -3,7 +3,13 @@ use std::fs::{self};
 use std::path::{Path, PathBuf};
 use std::time::SystemTime;
 
-// recursively iterate through all directories and return all the paths
+/// Recursively iterate through all directories and return all the paths
+/// #### Params:
+/// - path: [AsRef<Path>]
+/// #### Complexity:
+/// - O(n)
+/// #### Returns:
+/// - [Vec<PathBuf>]
 pub fn get_all_files_in_directory<P: AsRef<Path>>(path: P) -> Vec<PathBuf> {
     let mut files = Vec::new();
     let path = path.as_ref();
@@ -22,10 +28,9 @@ pub fn get_all_files_in_directory<P: AsRef<Path>>(path: P) -> Vec<PathBuf> {
     files
 }
 
-// return all files having given criteria
-// crieteria can be like ["*", "*.rs", "log*.txt",log.*]
-// * means match all characters
-
+/// return all files having given criteria
+/// crieteria can be like ["*", "*.rs", "log*.txt",log.*]
+/// * means match all characters
 pub fn get_files_in_directory_with_criteria<P: AsRef<Path>>(
     path: P,
     criteria: &Vec<String>,

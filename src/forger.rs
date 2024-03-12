@@ -4,7 +4,7 @@ use filetime::FileTime;
 use yaml_rust::Yaml;
 
 use crate::{
-    argparser::{load_command_line_arguents, Arguments},
+    argparser::{load_command_line_arguments, Arguments},
     commander::execute,
     constants::*,
     filehandler::{
@@ -36,7 +36,7 @@ impl Forger {
     pub fn new() -> Self {
         // load arguments
         Forger {
-            arguments: load_command_line_arguents(),
+            arguments: load_command_line_arguments(),
             forge_file_path: APP_FILENAME_DEFAULT_PATH.to_string(),
             variables: Variables::new(),
             job: Yaml::Null,
@@ -169,7 +169,7 @@ impl Forger {
         };
         // save args in variables
         self.variables
-            .add_from_hash(&self.arguments.keword_arguments);
+            .add_from_hash(&self.arguments.keyword_arguments);
         // save the declared in vars
         self.variables.add_from_hash(&get_variables(&self.job));
         // add the default args
