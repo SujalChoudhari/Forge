@@ -1,4 +1,5 @@
 # Forge: Automate Tasks with Ease
+![forgeLogo](https://github.com/SujalChoudhari/Forge/assets/85174767/efdd0846-2bc9-4b59-9dbd-4747b6d7a63c)
 
 ## Introduction
 
