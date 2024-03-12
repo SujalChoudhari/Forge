@@ -1,5 +1,4 @@
 use forger::Forger;
-use interpreter::get_run_once;
 use logging::start;
 
 pub mod argparser;

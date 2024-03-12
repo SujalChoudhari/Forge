@@ -1,7 +1,7 @@
 use crate::{
     constants::{
-        COMMANDS_KEY, DEFAULT_DETECT_PATTERN, DETECT_KEY, LINUX_STRING, MAC_STRING, OS_KEY,
-        RUN_ONCE_KEY, VARIABLES_KEY, WIN_STRING,
+        ALWAYS_KEY, COMMANDS_KEY, DEFAULT_DETECT_PATTERN, DETECT_KEY, LINUX_STRING, MAC_STRING,
+        OS_KEY, VARIABLES_KEY, WIN_STRING,
     },
     logging::error,
 };
@@ -46,17 +46,24 @@ pub fn get_dependencies(yaml: &Yaml) -> Vec<String> {
     }
 }
 
-pub fn get_run_once(yaml: &Yaml) -> bool {
+pub fn get_run_always(yaml: &Yaml) -> bool {
     match yaml {
         Yaml::Hash(map) => {
-            if map.contains_key(&Yaml::String(RUN_ONCE_KEY.to_owned())) {
-                let value_map = map[&Yaml::String(RUN_ONCE_KEY.to_owned())].to_owned();
+            if map.contains_key(&Yaml::String(ALWAYS_KEY.to_owned())) {
+                let value_map = map[&Yaml::String(ALWAYS_KEY.to_owned())].to_owned();
                 match value_map {
                     // if value map exists
                     Yaml::Boolean(boolean) => {
                         return boolean;
-                    },
-                    _ => error(&["Non Boolean found in \"", &RUN_ONCE_KEY, "\""].concat()),
+                    }
+                    _ => error(
+                        &[
+                            "Non Boolean found in \"",
+                            &ALWAYS_KEY,
+                            "\", expected 'true' or 'false'",
+                        ]
+                        .concat(),
+                    ),
                 }
             } else {
                 return false;

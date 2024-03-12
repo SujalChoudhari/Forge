@@ -92,7 +92,10 @@ pub fn get_last_modified_of_files<P: AsRef<Path>>(paths: &[P]) -> Vec<SystemTime
 // update the last modified date of the given files
 pub fn update_last_modified_of_files<P: AsRef<Path>>(paths: Vec<P>) {
     for path in paths {
-        set_file_mtime(path, FileTime::from_unix_time(0,0)).unwrap();
+        match set_file_mtime(path, FileTime::from_unix_time(0, 0)) {
+            Ok(_) => {}
+            Err(_) => {}
+        };
     }
 }
 
@@ -106,7 +109,7 @@ pub fn get_changed_files<P: AsRef<Path>>(file_paths: Vec<P>) -> Vec<P> {
         };
 
         let current_modified_time = metadata.modified().unwrap();
-        let zero_modified_time = FileTime::from_unix_time(0,0);
+        let zero_modified_time = FileTime::from_unix_time(0, 0);
 
         if FileTime::from_system_time(current_modified_time) != zero_modified_time {
             changed_files.push(path);

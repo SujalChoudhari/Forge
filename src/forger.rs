@@ -11,8 +11,11 @@ use crate::{
         get_changed_files, get_files_in_directory_with_criteria, get_last_modified_of_files,
         update_last_modified_of_files,
     },
-    interpreter::{get_commands, get_dependencies, get_job, get_operating_systems, get_run_once, get_variables},
-    logging::info,
+    interpreter::{
+        get_commands, get_dependencies, get_job, get_operating_systems, get_run_always,
+        get_variables,
+    },
+    logging::{error, info},
     parser::load_forge,
     variables::Variables,
 };
@@ -54,15 +57,15 @@ impl Forger {
         // load forge file
         let all_reciepe = load_forge(&self.forge_file_path);
 
-        // get the receipe name
-        let receipe_name: String = if self.arguments.nameless.len() >= 2 {
+        // get the recipe name
+        let recipe_name: String = if self.arguments.nameless.len() >= 2 {
             self.arguments.nameless.get(1).unwrap().to_string()
         } else {
             DEFAULT_RECIPE.to_string()
         };
 
         // extract the needed recipe
-        self.job = get_job(all_reciepe, receipe_name.to_owned());
+        self.job = get_job(all_reciepe, recipe_name.to_owned());
 
         // get the changed files
         let detectable_files_from_user = get_dependencies(&self.job);
@@ -79,7 +82,6 @@ impl Forger {
         // quit conditions
         if self.changed_file_paths.len() == 0 && !self.is_forge_updated() {
             self.can_run_job = false;
-            return;
         }
         if !get_operating_systems(&self.job).contains(&self.os)
             && !get_operating_systems(&self.job).contains(&"all".to_string())
@@ -87,8 +89,8 @@ impl Forger {
             info(
                 &[
                     "\"",
-                    &receipe_name,
-                    "\" receipe is not for \"",
+                    &recipe_name,
+                    "\" recipe is not for \"",
                     &self.os,
                     "\"",
                 ]
@@ -96,7 +98,9 @@ impl Forger {
             );
             self.can_run_job = false;
         }
-
+        if get_run_always(&self.job) {
+            self.can_run_job = true;
+        }
 
         let names: Vec<String> = self
             .changed_file_paths
@@ -177,10 +181,6 @@ impl Forger {
         if !self.can_run_job {
             return;
         };
-        if get_run_once(&self.job){
-            self.run_once();
-            return;
-        }
         // clean templates
         let mut current_os = self.os.to_owned();
         let mut cleaned_commands_to_run: Vec<String> = vec![];
@@ -203,16 +203,15 @@ impl Forger {
             .format_templates(cleaned_commands_to_run.to_owned());
 
         // run code
-
         for command in &self.commands_to_run {
-            let _out: Result<String, String> = execute(command);
-        }
-    }
-
-    pub fn run_once(&mut self) {
-        self.commands_to_run = get_commands(&self.job);
-        for command in &self.commands_to_run {
-            let _out: Result<String, String> = execute(command);
+            let out: Result<String, String> = execute(command);
+            match out {
+                Result::Ok(_) => {}
+                Result::Err(_) => {
+                    error("An error occured while running the command.\nStopping Execution");
+                    return;
+                },
+            }
         }
     }
 

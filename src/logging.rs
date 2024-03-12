@@ -1,9 +1,11 @@
 use colored::{ColoredString, Colorize};
 use std::process::exit;
 
+use crate::constants::{APP_NAME, APP_SUBTITLE, ERROR_TAG, INFORMATION_TAG, INPUT_TAG, WARNING_TAG};
+
 #[derive(Debug)]
 enum LogType {
-    DEBUG,
+    INPUT,
     INFO,
     WARN,
     ERROR,
@@ -14,8 +16,8 @@ pub fn error(message: &str) {
 }
 
 pub fn start() {
-    let title = " FORGE ".black().bold().on_bright_cyan();
-    let message = "Thanks for using forge.\n\n".truecolor(90, 90, 90).italic();
+    let title = APP_NAME.truecolor(0, 0, 0).bold().on_bright_cyan();
+    let message = APP_SUBTITLE.truecolor(90, 90, 90).italic();
     println!(" {} ", title);
     println!(" {} ", message);
 }
@@ -24,12 +26,12 @@ pub fn warn(message: &str) {
     log(LogType::WARN, message);
 }
 
-pub fn debug(message: &str) {
-    log(LogType::DEBUG, message);
-}
-
 pub fn info(message: &str) {
     log(LogType::INFO, message);
+}
+
+pub fn input(message: &str) {
+    log(LogType::INPUT, message);
 }
 
 pub fn intermidiate_info(title: &str, message: &str) {
@@ -50,10 +52,19 @@ fn get_time() -> String {
 
 fn get_log_tag(log_type: &LogType) -> ColoredString {
     let info_tag = match log_type {
-        LogType::DEBUG => "[DEBG]".bold().bright_blue(),
-        LogType::INFO => "[INFO]".bold().bright_green(),
-        LogType::WARN => "[WARN]".bold().bright_yellow(),
-        LogType::ERROR => "[EROR]".bold().bright_red(),
+        LogType::INFO => INFORMATION_TAG
+            .bold()
+            .on_truecolor(0, 255, 0)
+            .truecolor(0, 0, 0),
+        LogType::INPUT => INPUT_TAG
+            .bold()
+            .on_truecolor(0, 150, 255)
+            .truecolor(0, 0, 0),
+        LogType::WARN => WARNING_TAG
+            .bold()
+            .on_truecolor(0, 255, 255)
+            .truecolor(0, 0, 0),
+        LogType::ERROR => ERROR_TAG.bold().on_truecolor(255, 0, 0).truecolor(0, 0, 0),
     };
     info_tag
 }
@@ -62,10 +73,10 @@ fn log(log_type: LogType, message: &str) {
     let time_string: colored::ColoredString = get_time().italic().magenta();
     let info_tag = get_log_tag(&log_type);
     match log_type {
-        LogType::DEBUG => {
+        LogType::INFO => {
             println!("{info_tag} {time_string}: {message}");
         }
-        LogType::INFO => {
+        LogType::INPUT => {
             println!("{info_tag} {time_string}: {message}");
         }
         LogType::WARN => {
