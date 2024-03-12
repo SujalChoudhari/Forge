@@ -5,11 +5,11 @@ use std::time::SystemTime;
 
 /// Recursively iterate through all directories and return all the paths
 /// #### Params:
-/// - path: [AsRef<Path>]
+/// - path: [AsRef]
 /// #### Complexity:
 /// - O(n)
 /// #### Returns:
-/// - [Vec<PathBuf>]
+/// - [Vec]
 pub fn get_all_files_in_directory<P: AsRef<Path>>(path: P) -> Vec<PathBuf> {
     let mut files = Vec::new();
     let path = path.as_ref();
