@@ -1,5 +1,7 @@
 pub const APP_NAME: &str = " Forge ";
-pub const APP_SUBTITLE: &str = "Thanks for using Forge. ⭐ Star on github: https://github.com/SujalChoudhari/Forge";
+pub const APP_VERSION: &str = "1.0.0-pre-release.2";
+pub const APP_SUBTITLE: &str =
+    "🔨 Thanks for using Forge. ⭐ Star on github: https://github.com/SujalChoudhari/Forge";
 pub const APP_FILENAME: &str = "forge";
 pub const DEFAULT_RECIPE: &str = "forge";
 
@@ -28,4 +30,8 @@ pub const VARIABLE_REPLACE_WITH_INDEX_TEMPLATE: (&str, &str) = ("{$", "}");
 pub const INFORMATION_TAG: &str = " ⓘ  [INFO] ";
 pub const WARNING_TAG: &str = " ⚠  [WARN] ";
 pub const ERROR_TAG: &str = " ⓧ  [EROR] ";
-pub const INPUT_TAG: &str = " ?  [INPT] ";
+pub const INPUT_TAG: &str = " ⧁  [INPT]  ";
+
+pub const VERSION_FLAG: (&str, &str) = ("v", "version");
+pub const VERBOSE_FLAG: (&str, &str) = ("V", "verbose");
+pub const HELP_FLAG: (&str, &str) = ("h", "help");

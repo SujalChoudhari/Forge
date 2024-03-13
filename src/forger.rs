@@ -4,18 +4,19 @@ use filetime::FileTime;
 use yaml_rust::Yaml;
 
 use crate::{
-    argparser::{load_command_line_arguments, Arguments},
+    argparser::Arguments,
     commander::execute,
     constants::*,
     filehandler::{
         get_changed_files, get_files_in_directory_with_criteria, get_last_modified_of_files,
         update_last_modified_of_files,
     },
+    help::print_help_message,
     interpreter::{
         get_commands, get_dependencies, get_job, get_operating_systems, get_run_always,
         get_variables,
     },
-    logging::{error, info},
+    logging::{error, info, start, warn, IS_VERBOSE},
     parser::load_forge,
     variables::Variables,
 };
@@ -36,7 +37,7 @@ impl Forger {
     pub fn new() -> Self {
         // load arguments
         Forger {
-            arguments: load_command_line_arguments(),
+            arguments: Arguments::load_command_line_arguments(),
             forge_file_path: APP_FILENAME_DEFAULT_PATH.to_string(),
             variables: Variables::new(),
             job: Yaml::Null,
@@ -53,7 +54,40 @@ impl Forger {
         }
     }
 
-    pub fn collect(&mut self) {
+    pub fn run(&mut self) {
+        // check for code should continue execution
+        if !self.handle_flags() {
+            return;
+        };
+        start();
+        self.collect();
+        self.engrave();
+        self.forge();
+        self.quench();
+    }
+
+    fn handle_flags(&mut self) -> bool {
+        // verbose flag
+        if self.arguments.is_flag_set(VERBOSE_FLAG) {
+            unsafe { IS_VERBOSE = true };
+        }
+
+        // version flag
+        if self.arguments.is_flag_set(VERSION_FLAG) {
+            info(&["Current forge version: ", APP_VERSION].concat());
+            return false;
+        }
+
+        // help flag
+        if self.arguments.is_flag_set(HELP_FLAG) {
+            print_help_message();
+            return false;
+        }
+
+        true
+    }
+
+    fn collect(&mut self) {
         // load forge file
         let all_reciepe = load_forge(&self.forge_file_path);
 
@@ -69,7 +103,7 @@ impl Forger {
 
         // get the changed files
         let detectable_files_from_user = get_dependencies(&self.job);
-        if self.is_forge_updated() {
+        if self.is_recipe_updated() {
             self.changed_file_paths =
                 get_files_in_directory_with_criteria(DEFALUT_DIR, &detectable_files_from_user);
         } else {
@@ -80,13 +114,13 @@ impl Forger {
         }
 
         // quit conditions
-        if self.changed_file_paths.len() == 0 && !self.is_forge_updated() {
+        if self.changed_file_paths.len() == 0 && !self.is_recipe_updated() {
             self.can_run_job = false;
         }
         if !get_operating_systems(&self.job).contains(&self.os)
             && !get_operating_systems(&self.job).contains(&"all".to_string())
         {
-            info(
+            warn(
                 &[
                     "\"",
                     &recipe_name,
@@ -163,7 +197,7 @@ impl Forger {
         self.commands_to_run = get_commands(&self.job);
     }
 
-    pub fn engrave(&mut self) {
+    fn engrave(&mut self) {
         if !self.can_run_job {
             return;
         };
@@ -177,7 +211,7 @@ impl Forger {
             .add(OS_VARIABLE_NAME.to_string(), self.os.to_string());
     }
 
-    pub fn forge(&mut self) {
+    fn forge(&mut self) {
         if !self.can_run_job {
             return;
         };
@@ -210,24 +244,24 @@ impl Forger {
                 Result::Err(_) => {
                     error("An error occured while running the command.\nStopping Execution");
                     return;
-                },
+                }
             }
         }
     }
 
-    pub fn quench(&mut self) {
+    fn quench(&mut self) {
         if !self.can_run_job {
             return;
         };
 
-        if self.is_forge_updated() {
+        if self.is_recipe_updated() {
             update_last_modified_of_files(vec![APP_FILENAME]);
         }
         // set the time to 0 for changed files
         update_last_modified_of_files(self.changed_file_paths.to_owned());
     }
 
-    fn is_forge_updated(&self) -> bool {
+    fn is_recipe_updated(&self) -> bool {
         !FileTime::from_system_time(
             get_last_modified_of_files(&[&APP_FILENAME])
                 .get(0)

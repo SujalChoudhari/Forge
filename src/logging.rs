@@ -1,7 +1,9 @@
 use colored::{ColoredString, Colorize};
 use std::process::exit;
 
-use crate::constants::{APP_NAME, APP_SUBTITLE, ERROR_TAG, INFORMATION_TAG, INPUT_TAG, WARNING_TAG};
+use crate::constants::{
+    APP_NAME, APP_SUBTITLE, APP_VERSION, ERROR_TAG, INFORMATION_TAG, INPUT_TAG, WARNING_TAG,
+};
 
 #[derive(Debug)]
 enum LogType {
@@ -11,15 +13,21 @@ enum LogType {
     ERROR,
 }
 
+pub static mut IS_VERBOSE: bool = false;
+
 pub fn error(message: &str) {
     log(LogType::ERROR, message);
 }
 
 pub fn start() {
     let title = APP_NAME.truecolor(0, 0, 0).bold().on_bright_cyan();
+    let version = if unsafe { IS_VERBOSE } {
+        APP_VERSION.truecolor(100, 100, 100).italic()
+    } else {
+        "".bold()
+    };
     let message = APP_SUBTITLE.truecolor(90, 90, 90).italic();
-    println!(" {} ", title);
-    println!(" {} ", message);
+    println!(" {} {} {}\n", title, version, message);
 }
 
 pub fn warn(message: &str) {
@@ -70,8 +78,13 @@ fn get_log_tag(log_type: &LogType) -> ColoredString {
 }
 
 fn log(log_type: LogType, message: &str) {
-    let time_string: colored::ColoredString = get_time().italic().magenta();
     let info_tag = get_log_tag(&log_type);
+    let time_string: colored::ColoredString = if unsafe { IS_VERBOSE } {
+        get_time().italic().magenta()
+    } else {
+        "".bold()
+    };
+
     match log_type {
         LogType::INFO => {
             println!("{info_tag} {time_string}: {message}");
@@ -92,5 +105,9 @@ fn log(log_type: LogType, message: &str) {
 fn intermidiate_log(log_type: LogType, title: ColoredString, message: ColoredString) {
     let info_tag = get_log_tag(&log_type);
     let time_string: colored::ColoredString = get_time().italic().magenta();
-    println!("{info_tag} {time_string}:\n{title}\n{message}");
+    if unsafe { IS_VERBOSE } {
+        println!("{info_tag} {time_string}:\n{title}\n{message}");
+    } else {
+        println!("{info_tag}: {title}");
+    }
 }

@@ -1,5 +1,4 @@
 use forger::Forger;
-use logging::start;
 
 pub mod argparser;
 pub mod commander;
@@ -10,12 +9,9 @@ pub mod logging;
 pub mod parser;
 pub mod variables;
 pub mod constants;
+pub mod help;
 
 fn main() {
-    start();
     let mut forger: Forger = Forger::new();
-    forger.collect();
-    forger.engrave();
-    forger.forge();
-    forger.quench();
+    forger.run();
 }
