@@ -4,13 +4,10 @@ build:
   - cargo build --release
 
   - win
-  - copy .\\target\\release\\forge.exe .\\forge.exe
-  - move  /Y .\\forge.exe forge_{version}_win.exe
+  - copy .\\target\\release\\forge.exe .forge_{version}_win.exe
 
   - mac 
-  - cp ./target/release/forge ./forge
-  - mv -f ./forge ./forge_{version}_mac
+  - cp ./target/release/forge ./forge_{version}_mac.so
 
   - linux
-  - cp ./target/release/forge ./forge
-  - mv -f ./forge ./forge_{version}_linux
+  - cp ./target/release/forge ./forge_{version}_linux.so

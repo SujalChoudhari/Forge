@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, time::SystemTime};
 
 use filetime::FileTime;
 use yaml_rust::Yaml;
@@ -275,7 +275,7 @@ impl Forger {
         !FileTime::from_system_time(
             get_last_modified_of_files(&[&APP_FILENAME])
                 .get(0)
-                .unwrap()
+                .unwrap_or(&SystemTime::now())
                 .to_owned(),
         )
         .eq(&FileTime::from_unix_time(0, 0))
