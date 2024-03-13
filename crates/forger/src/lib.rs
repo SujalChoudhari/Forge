@@ -1,6 +1,5 @@
 use std::{path::PathBuf, time::SystemTime};
 
-use parser::load_forge;
 use argparser::Arguments;
 use cli::help::print_help_message;
 use commander::execute;
@@ -14,6 +13,7 @@ use interpreter::{
     get_commands, get_dependencies, get_job, get_operating_systems, get_run_always, get_variables,
 };
 use logger::{info, start, warn, IS_VERBOSE};
+use parser::load_forge;
 use variable::Variables;
 use yaml_rust::Yaml;
 
@@ -28,7 +28,6 @@ pub struct Forger {
     commands_to_run: Vec<String>,
     can_run_job: bool,
 }
-
 pub static mut IS_FORCE_EXECUTE_ALL: bool = false;
 
 impl Forger {
