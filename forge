@@ -1,31 +1,16 @@
-forge: # this is default, will run when `forge [args] [kwargs]` is called
-  on: [linux,win] # only run this on win and linux
-  detect: "./src" # only run this when these files are changed
-  vars: # all the vars can be used in permutations 
-    mat_1: [a,b,c]
-    mat_2: ["1","2","3"]
-  always: true # run this regardless any file change (override detect)
-  run: echo {mat_1}{mat_2} # commands to run
-
-
-hack: # major feilds are optional
-  on: all
-  always: true
-  run: # run can be a list
-  - ping google.com
-  - ping sujal.xyz
-  - ping x.com
-
-commit:
+build:
   always: true
   run:
-  - linux
-  - echo add -A
-  - mac
-  - echo commit -m {message} # can declare message as `forge commit --message="Testing"` if not it will be asked during execution.
-  - win
-  - echo push
+  - cargo build --release
 
-mac_only:
-  on: mac
-  run: echo this is mac
+  - win
+  - copy .\\target\\release\\forge.exe .\\forge.exe
+  - move  /Y .\\forge.exe forge_{version}_win.exe
+
+  - mac 
+  - cp ./target/release/forge ./forge
+  - mv -f ./forge ./forge_{version}_mac
+
+  - linux
+  - cp ./target/release/forge ./forge
+  - mv -f ./forge ./forge_{version}_linux

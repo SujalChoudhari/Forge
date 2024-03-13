@@ -35,3 +35,4 @@ pub const INPUT_TAG: &str = " ⧁  [INPT]  ";
 pub const VERSION_FLAG: (&str, &str) = ("v", "version");
 pub const VERBOSE_FLAG: (&str, &str) = ("V", "verbose");
 pub const HELP_FLAG: (&str, &str) = ("h", "help");
+pub const FORCE_EXECUTE_FLAG: (&str, &str) = ("f", "force");

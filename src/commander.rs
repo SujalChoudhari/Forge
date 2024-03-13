@@ -14,7 +14,7 @@ use crate::logging::{error, intermidiate_error, intermidiate_info, warn};
 ///   - Where `m` is the complexity of the provided command, typically influenced by its length.
 ///
 /// #### Returns
-/// - `Result<(String, String), String>`: A tuple containing the standard output and standard error of the command execution. 
+/// - `Result<(String, String), String>`: A tuple containing the standard output and standard error of the command execution.
 ///   - `Ok((stdout, stderr))`: If the command executed successfully, `stdout` contains the standard output, and `stderr` contains the standard error (if any).
 ///   - `Err(error_message)`: If an error occurred during command execution, `error_message` provides details about the failure.
 
@@ -29,11 +29,13 @@ pub fn execute(command: &str) -> Result<String, String> {
     let raw_output;
     match command_result {
         Result::Ok(out) => {
+            if out.status.code().unwrap_or(0) != 0 {
+                is_error = true;
+            }
             if out.stdout.len() > 0 {
                 raw_output = out.stdout;
             } else {
                 raw_output = out.stderr;
-                is_error = true;
             }
         }
         Result::Err(_) => {

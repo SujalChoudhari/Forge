@@ -16,7 +16,7 @@ use crate::{
         get_commands, get_dependencies, get_job, get_operating_systems, get_run_always,
         get_variables,
     },
-    logging::{error, info, start, warn, IS_VERBOSE},
+    logging::{info, start, warn, IS_VERBOSE},
     parser::load_forge,
     variables::Variables,
 };
@@ -32,6 +32,8 @@ pub struct Forger {
     commands_to_run: Vec<String>,
     can_run_job: bool,
 }
+
+pub static mut IS_FORCE_EXECUTE_ALL: bool = false;
 
 impl Forger {
     pub fn new() -> Self {
@@ -67,11 +69,17 @@ impl Forger {
     }
 
     fn handle_flags(&mut self) -> bool {
+        // Non-Terminating Flags
         // verbose flag
         if self.arguments.is_flag_set(VERBOSE_FLAG) {
             unsafe { IS_VERBOSE = true };
         }
+        // force flag
+        if self.arguments.is_flag_set(FORCE_EXECUTE_FLAG) {
+            unsafe { IS_FORCE_EXECUTE_ALL = true }
+        }
 
+        // Terminating Flags
         // version flag
         if self.arguments.is_flag_set(VERSION_FLAG) {
             info(&["Current forge version: ", APP_VERSION].concat());
@@ -242,8 +250,10 @@ impl Forger {
             match out {
                 Result::Ok(_) => {}
                 Result::Err(_) => {
-                    error("An error occured while running the command.\nStopping Execution");
-                    return;
+                    if unsafe { IS_FORCE_EXECUTE_ALL == false } {
+                        warn("An error occured while running the command.\nStopping Execution.\nTo continue executing set use '-f'.");
+                        return;
+                    }
                 }
             }
         }

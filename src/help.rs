@@ -3,18 +3,22 @@ use colored::Colorize;
 use std::collections::HashMap;
 
 pub fn print_help_message() {
-    let mut commands = HashMap::new();
+    let mut commands: HashMap<(&str, &str), &str> = HashMap::new();
     commands.insert(
-        "-h, --help",
-        "Print help information. Use -h -V for verbose output.",
+        HELP_FLAG,
+        "Print help information. Use -h -V for verbose help menu.",
     );
-    commands.insert("-v, --version", "Print version information");
-    commands.insert("-V, --verbose", "Print verbose output");
+    commands.insert(VERSION_FLAG, "Print version information");
+    commands.insert(VERBOSE_FLAG, "Print verbose output");
+    commands.insert(
+        FORCE_EXECUTE_FLAG,
+        "Allows execution of all commands despite encountered errors.",
+    );
 
     let mut internal_vars = HashMap::new();
     internal_vars.insert(
         OS_VARIABLE_NAME,
-        "The current OS (possible values: win, linux, mac)",
+        "\tThe current OS (possible values: win, linux, mac)",
     );
     internal_vars.insert(
         FILE_PATH_VARIABLE_NAME,
@@ -31,7 +35,10 @@ pub fn print_help_message() {
     print_help_message_raw(&commands, &internal_vars);
 }
 
-fn print_help_message_raw(commands: &HashMap<&str, &str>, internal_vars: &HashMap<&str, &str>) {
+fn print_help_message_raw(
+    commands: &HashMap<(&str, &str), &str>,
+    internal_vars: &HashMap<&str, &str>,
+) {
     println!(
         "{}: {}",
         APP_NAME.on_cyan().truecolor(0, 0, 0),
@@ -46,17 +53,19 @@ fn print_help_message_raw(commands: &HashMap<&str, &str>, internal_vars: &HashMa
 
     for (option, description) in commands.iter() {
         println!(
-            "\t-\t{}\t{}",
-            option.yellow(),
+            "\t-\t-{},--{}\t{}",
+            option.0.yellow(),
+            option.1.yellow(),
             description.truecolor(150, 150, 150)
         );
     }
-
+    // Print COMMANDS section
     println!("\n    {}:", "COMMANDS".bold().green());
     println!(
         "\t\t{} <recipe>  <vars...> {}",
         APP_FILENAME.cyan(),
-        "Run a command with given flags and variables. Variables are set using --<key>=<value>"
+        "Run a command with given flags and variables. 
+        \t\t\t\tVariables are set using --<key>=<value>"
             .truecolor(150, 150, 150)
     );
 
@@ -75,37 +84,44 @@ fn print_help_message_raw(commands: &HashMap<&str, &str>, internal_vars: &HashMa
     }
 
     if unsafe { IS_VERBOSE } {
+        // Print VARIABLE REPLACEMENT, DETECTION PATTERN, FILE PATH, DEFAULT RECIPE, DEFAULT DIRECTORY, and SEE ALSO sections
         println!(
             "\n    {}:{}",
             "VARIABLE REPLACEMENT".bold().green(),
-            "\n\t-\tVariables can be used in commands and file paths enclosed in curly braces, e.g. {os} or {fileDir}\n\t-\tIndexed variables can be used with a number inside the curly braces, e.g. {$fileName}".truecolor(150, 150, 150)
+            "\n\t-\tVariables can be used in commands and file paths 
+        \tenclosed in curly braces, e.g. {os} or {fileDir}
+        -\tIndexed variables can be used with a number inside 
+        \tthe curly braces, e.g. {$fileName}"
+                .truecolor(150, 150, 150)
         );
+        println!("");
         println!(
-            "\n    {}:{}",
+            "    {}:\t {} {}",
             "DETECTION PATTERN".bold().green(),
-            &format!("Default detection pattern is '{}'", DEFAULT_DETECT_PATTERN)
-                .truecolor(150, 150, 150)
+            DEFAULT_DETECT_PATTERN.yellow(),
+            "Default when recipe doesn't contain detect tag.".truecolor(150, 150, 150)
         );
         println!(
-            "    {}:{}",
+            "    {}:\t\t {} {}",
             "FILE PATH".bold().green(),
-            &format!("The default file path is '{}'", APP_FILENAME_DEFAULT_PATH)
-                .truecolor(150, 150, 150)
+            APP_FILENAME_DEFAULT_PATH.yellow(),
+            "Allowed filepath for execution. Other files will be ignored.".truecolor(150, 150, 150)
         );
         println!(
-            "    {}:{}",
+            "    {}:\t {} {}",
             "DEFAULT RECIPE".bold().green(),
-            &format!("The default recipe is '{}'", DEFAULT_RECIPE).truecolor(150, 150, 150)
+            DEFAULT_RECIPE.yellow(),
+            "Used when no recipe is specified. Allows default execution".truecolor(150, 150, 150)
         );
         println!(
-            "    {}:{}",
+            "    {}:\t {} {}",
             "ROOT DIRECTORY".bold().green(),
-            &format!("The default directory is '{}'", DEFALUT_DIR).truecolor(150, 150, 150)
+            DEFALUT_DIR.yellow(),
+            "Forge will start in the current directory of forge file.".truecolor(150, 150, 150)
         );
     }
-
     println!(
-        "    {}:\t {} {}",
+        "    {}:\t\t {}\n\t\t\t [ctrl + click]{}",
         "SEE ALSO".bold().underline().blue(),
         "Forge recipe documentation for more information on recipes and variables"
             .truecolor(150, 150, 150),
