@@ -2,11 +2,11 @@ pub const APP_NAME: &str = " Forge ";
 pub const APP_VERSION: &str = "1.0.0-pre-release.2";
 pub const APP_SUBTITLE: &str =
     "🔨 Thanks for using Forge. ⭐ Star on github: https://github.com/SujalChoudhari/Forge";
-pub const APP_FILENAME: &str = "forge";
+pub const APP_FILENAME: &str = "ForgeFile";
 pub const DEFAULT_RECIPE: &str = "forge";
 
 pub const DEFALUT_DIR: &str = "./";
-pub const APP_FILENAME_DEFAULT_PATH: &str = "./forge";
+pub const APP_FILENAME_DEFAULT_PATH: &str = "./ForgeFile";
 pub const DEFAULT_DETECT_PATTERN: &str = "*";
 
 pub const WIN_STRING: &str = "win";

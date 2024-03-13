@@ -1,25 +1,21 @@
 use std::{path::PathBuf, time::SystemTime};
 
-use filetime::FileTime;
-use yaml_rust::Yaml;
-
-use crate::{
-    argparser::Arguments,
-    commander::execute,
-    constants::*,
-    filehandler::{
-        get_changed_files, get_files_in_directory_with_criteria, get_last_modified_of_files,
-        update_last_modified_of_files,
-    },
-    help::print_help_message,
-    interpreter::{
-        get_commands, get_dependencies, get_job, get_operating_systems, get_run_always,
-        get_variables,
-    },
-    logging::{info, start, warn, IS_VERBOSE},
-    parser::load_forge,
-    variables::Variables,
+use parser::load_forge;
+use argparser::Arguments;
+use cli::help::print_help_message;
+use commander::execute;
+use constants::*;
+use filehandler::{
+    get_changed_files, get_files_in_directory_with_criteria, get_last_modified_of_files,
+    update_last_modified_of_files,
 };
+use filetime::FileTime;
+use interpreter::{
+    get_commands, get_dependencies, get_job, get_operating_systems, get_run_always, get_variables,
+};
+use logger::{info, start, warn, IS_VERBOSE};
+use variable::Variables;
+use yaml_rust::Yaml;
 
 #[derive(Debug)]
 pub struct Forger {

@@ -1,7 +1,7 @@
 use std::process::Command;
 use std::string::String;
 
-use crate::logging::{error, intermidiate_error, intermidiate_info, warn};
+use logger::{error, intermidiate_error, intermidiate_info, warn};
 
 /// Executes the given command on the current operating system.
 /// This function is platform-independent.

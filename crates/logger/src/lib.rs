@@ -1,7 +1,7 @@
 use colored::{ColoredString, Colorize};
 use std::process::exit;
 
-use crate::constants::{
+use constants::{
     APP_NAME, APP_SUBTITLE, APP_VERSION, ERROR_TAG, INFORMATION_TAG, INPUT_TAG, WARNING_TAG,
 };
 

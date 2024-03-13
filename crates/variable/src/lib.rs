@@ -2,12 +2,12 @@ use regex::Regex;
 use std::io;
 use std::{collections::HashMap, vec};
 
-use crate::constants::{
+use constants::{
     FILE_DIR_VARIABLE_NAME, FILE_EXT_VARIABLE_NAME, FILE_NAME_EXT_VARIABLE_NAME,
     FILE_NAME_VARIABLE_NAME, FILE_PATH_VARIABLE_NAME, VARIABLE_REPLACE_TEMPLATE,
     VARIABLE_REPLACE_WITH_INDEX_TEMPLATE,
 };
-use crate::logging::input;
+use logger::input;
 
 #[derive(Debug)]
 pub struct Variables {
