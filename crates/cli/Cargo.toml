@@ -10,3 +10,4 @@ constants = { path = "../constants"}
 logger = { path = "../logger"}
 
 colored = "2.1.0"
+yaml-rust = "0.4.5"
