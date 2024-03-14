@@ -1,5 +1,4 @@
 use regex::Regex;
-use std::io;
 use std::{collections::HashMap, vec};
 
 use constants::{
@@ -7,7 +6,7 @@ use constants::{
     FILE_NAME_VARIABLE_NAME, FILE_PATH_VARIABLE_NAME, VARIABLE_REPLACE_TEMPLATE,
     VARIABLE_REPLACE_WITH_INDEX_TEMPLATE,
 };
-use logger::{error, input};
+use logger::input;
 
 #[derive(Debug)]
 pub struct Variables {
@@ -242,8 +241,7 @@ impl Variables {
                 continue;
             }
 
-            let trimmed_input =
-                input(&["\nEnter ", placeholder, ":"].concat(),"forge");
+            let trimmed_input = input(&["\nEnter ", placeholder, ":"].concat(), "forge");
             self.add(placeholder.to_owned(), trimmed_input.to_owned());
             replacements.push((format!("{{{}}}", placeholder), trimmed_input));
         }

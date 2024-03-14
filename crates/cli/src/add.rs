@@ -1,5 +1,5 @@
 use constants::APP_SUBTITLE;
-use logger::input;
+use logger::{info, input};
 use std::collections::HashMap;
 use std::fs::OpenOptions;
 use std::io::{self, Write};
@@ -77,9 +77,6 @@ pub fn add_recipe_to_forge_from_user() {
     let run: Vec<String> = run_input.split(',').map(|s| s.trim().to_owned()).collect();
 
     // Call add_recipe_to_forge function with user-provided inputs
-    println!(
-        "{:?}\n,{:?}\n,{:?}\n,{:?}\n,{:?}\n,{:?}\n",
-        &name, os, detect, always, vars, run
-    );
+    info(&["Recipe ", &name, " is added."].concat());
     add_recipe_to_forge(&name, os, detect, always, vars, run);
 }
