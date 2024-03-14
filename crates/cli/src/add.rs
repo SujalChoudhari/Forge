@@ -2,7 +2,7 @@ use constants::{ALWAYS_KEY, APP_SUBTITLE, DETECT_KEY, OS_KEY, RUN_KEY, VARIABLES
 use logger::{info, input};
 use std::collections::HashMap;
 use std::fs::OpenOptions;
-use std::io::{self, Write};
+use std::io::Write;
 
 pub fn add_recipe_to_forge(
     name: &str,
