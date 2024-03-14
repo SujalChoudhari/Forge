@@ -4,17 +4,31 @@ use logger::IS_VERBOSE;
 use std::collections::HashMap;
 
 pub fn print_help_message() {
-    let mut commands: HashMap<(&str, &str), &str> = HashMap::new();
-    commands.insert(
+    let mut flags: HashMap<(&str, &str), &str> = HashMap::new();
+    flags.insert(
         HELP_FLAG,
         "Print help information. Use -h -V for verbose help menu.",
     );
-    commands.insert(VERSION_FLAG, "Print version information");
-    commands.insert(VERBOSE_FLAG, "Print verbose output");
-    commands.insert(
+    flags.insert(VERSION_FLAG, "Print version information");
+    flags.insert(VERBOSE_FLAG, "Print verbose output");
+    flags.insert(
         FORCE_EXECUTE_FLAG,
         "Allows execution of all commands despite encountered errors.",
     );
+
+    let mut commands: HashMap<&str, &str> = HashMap::new();
+    commands.insert(
+        DEFAULT_RECIPE,
+        "Run a command with given flags and variables. 
+    \t\t\t\tVariables are set using --<key>=<value>",
+    );
+
+    let add_command_description = format!(
+    "Adds a recipe to the current {} 
+    \t\t\t\tQuestions will be asked for initializing",
+        APP_FILENAME
+    );
+    commands.insert("forge add", &add_command_description);
 
     let mut internal_vars = HashMap::new();
     internal_vars.insert(
@@ -33,11 +47,12 @@ pub fn print_help_message() {
     internal_vars.insert(FILE_EXT_VARIABLE_NAME, "The extension of the current file");
     internal_vars.insert(FILE_DIR_VARIABLE_NAME, "The directory of the current file");
 
-    print_help_message_raw(&commands, &internal_vars);
+    print_help_message_raw(&flags, &commands, &internal_vars);
 }
 
 fn print_help_message_raw(
-    commands: &HashMap<(&str, &str), &str>,
+    flags: &HashMap<(&str, &str), &str>,
+    commands: &HashMap<&str, &str>,
     internal_vars: &HashMap<&str, &str>,
 ) {
     println!(
@@ -52,7 +67,7 @@ fn print_help_message_raw(
         "(Options)".truecolor(0, 100, 0)
     );
 
-    for (option, description) in commands.iter() {
+    for (option, description) in flags.iter() {
         println!(
             "\t-\t-{},--{}\t{}",
             option.0.yellow(),
@@ -62,13 +77,20 @@ fn print_help_message_raw(
     }
     // Print COMMANDS section
     println!("\n    {}:", "COMMANDS".bold().green());
-    println!(
-        "\t\t{} <recipe>  <vars...> {}",
-        DEFAULT_RECIPE.cyan(),
-        "Run a command with given flags and variables. 
-        \t\t\t\tVariables are set using --<key>=<value>"
-            .truecolor(150, 150, 150)
-    );
+    // println!(
+    //     "\t\t{} <recipe>  <vars...> {}",
+    //     DEFAULT_RECIPE.cyan(),
+    //     "Run a command with given flags and variables.
+    //     \t\t\t\tVariables are set using --<key>=<value>"
+    //         .truecolor(150, 150, 150)
+    // );
+    for (var_name, description) in commands.iter() {
+        println!(
+            "\t-\t{}   \t{}",
+            var_name.yellow(),
+            description.truecolor(150, 150, 150)
+        );
+    }
 
     println!(
         "\n    {}:",

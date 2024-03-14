@@ -13,15 +13,15 @@ Forge is a powerful command-line tool written in Rust that simplifies the execut
    - **Pre-built Binaries:** Download pre-built binaries for your platform from [Releases](https://github.com/SujalChoudhari/Forge/releases)
 
 2. **Create a Forge File:**
-   - Create a YAML file named `forge` in your project (root) directory.
+   - Create a YAML file named `ForgeFile` in your project (root) directory.
 
 ## Forge File Structure
 
 A Forge file consists of sections that define various aspects of task execution. Here's a breakdown of the available sections:
 
-**1. `default`:**
+**1. `forge`:**
 
-   - This section serves as the default recipe that runs when you execute `forge` without specifying a recipe name.
+   - This section serves as the default recipe that runs when you execute `ForgeFile` without specifying a recipe name.
    - Consider including commonly used tasks or a starting point for your workflows here.
 
 **2. Recipe Definitions:**
@@ -86,7 +86,10 @@ test:
 hack:
   always: true
   run:
+    - linux # run below commands if os is linux
     - ping example.com
+    
+    - win # run below commands only if os is windows
     - ping sujal.xyz
 
 commit:

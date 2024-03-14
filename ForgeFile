@@ -12,11 +12,11 @@ build:
   - linux
   - cp ./target/release/forge ./forge_{version}_linux.so
 
-
+# Generated using forge add. 🔨 Thanks for using Forge. ⭐ Star on github: https://github.com/SujalChoudhari/Forge
 forge:
-  run:
-  - echo {msg}
-  - echo {msg}
-  - echo {msg}
-  - echo {msg}
-  - echo {msg}
+  os: ["all"]
+  detect: ["*"]
+  always: true
+  vars: {}
+  run: ["echo forge"]
+

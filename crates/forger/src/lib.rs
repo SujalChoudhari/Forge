@@ -1,7 +1,7 @@
 use std::{path::PathBuf, time::SystemTime};
 
 use argparser::Arguments;
-use cli::help::print_help_message;
+use cli::{handle_cli_command, help::print_help_message};
 use commander::execute;
 use constants::*;
 use filehandler::{
@@ -102,7 +102,12 @@ impl Forger {
         };
 
         // extract the needed recipe
-        self.job = get_job(all_reciepe, recipe_name.to_owned());
+        if let Some(returned_job) = get_job(all_reciepe, recipe_name.to_owned()) {
+            self.job = returned_job;
+        } else {
+            self.job = Yaml::Null;
+            handle_cli_command(&recipe_name);
+        };
 
         // get the changed files
         let detectable_files_from_user = get_dependencies(&self.job);
