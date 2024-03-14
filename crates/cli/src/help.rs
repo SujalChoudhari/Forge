@@ -64,7 +64,7 @@ fn print_help_message_raw(
     println!("\n    {}:", "COMMANDS".bold().green());
     println!(
         "\t\t{} <recipe>  <vars...> {}",
-        APP_FILENAME.cyan(),
+        DEFAULT_RECIPE.cyan(),
         "Run a command with given flags and variables. 
         \t\t\t\tVariables are set using --<key>=<value>"
             .truecolor(150, 150, 150)
