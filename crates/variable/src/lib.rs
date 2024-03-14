@@ -247,6 +247,7 @@ impl Variables {
                 .read_line(&mut input)
                 .expect("Failed to read line");
             let trimmed_input = input.trim().to_string();
+            self.add(placeholder.to_owned(), trimmed_input.to_owned());
             replacements.push((format!("{{{}}}", placeholder), trimmed_input));
         }
 

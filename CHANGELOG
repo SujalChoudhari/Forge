@@ -10,12 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changelog
 - Workspace System
 
-### Changes
+### Fixed
+- Wrong name in COMMAND: renamed FrogeFile to Forge.
+- Inputed variables are now saved in storage.
+
+### Changed
 - renamed `forge` file to `ForgeFile` as forge will be the main entry point.
 
 ## 1.0.0-Pre-Release.2
 ### Added
-- Help menu (-h)
+- Help menu (-h, -help)
 - -f, --force flag
 - -v,--version flag
 - -V, --verbose flag 
