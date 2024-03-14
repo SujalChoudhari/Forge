@@ -1,4 +1,4 @@
-use constants::APP_SUBTITLE;
+use constants::{ALWAYS_KEY, APP_SUBTITLE, DETECT_KEY, OS_KEY, RUN_KEY, VARIABLES_KEY};
 use logger::{info, input};
 use std::collections::HashMap;
 use std::fs::OpenOptions;
@@ -16,8 +16,8 @@ pub fn add_recipe_to_forge(
 
     // Create a new YAML string for the recipe
     let yaml_string = format!(
-        "\n# Generated using forge add. {}\n{}:\n  os: {:?}\n  detect: {:?}\n  always: {}\n  vars: {:?}\n  run: {:?}\n",
-        APP_SUBTITLE,name, os, detect, always, vars, run
+        "\n# Generated using forge add. {}\n{}:\n  {}: {:?}\n  {}: {:?}\n  {}: {}\n  {}: {:?}\n  {}: {:?}\n",
+        APP_SUBTITLE,name, OS_KEY,os, DETECT_KEY,detect,ALWAYS_KEY ,always,VARIABLES_KEY, vars,RUN_KEY, run
     );
 
     // Open ForgeFile or create if it doesn't exist

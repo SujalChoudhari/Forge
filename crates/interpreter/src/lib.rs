@@ -1,7 +1,7 @@
 use logger::error;
 
 use constants::{
-    ALWAYS_KEY, COMMANDS_KEY, DEFAULT_DETECT_PATTERN, DETECT_KEY, LINUX_STRING, MAC_STRING, OS_KEY,
+    ALWAYS_KEY, RUN_KEY, DEFAULT_DETECT_PATTERN, DETECT_KEY, LINUX_STRING, MAC_STRING, OS_KEY,
     VARIABLES_KEY, WIN_STRING,
 };
 use std::{collections::HashMap, vec};
@@ -78,7 +78,7 @@ pub fn get_run_always(yaml: &Yaml) -> bool {
 }
 
 pub fn get_commands(yaml: &Yaml) -> Vec<String> {
-    if let Some(result) = get_list_or_string(yaml, COMMANDS_KEY.to_string()) {
+    if let Some(result) = get_list_or_string(yaml, RUN_KEY.to_string()) {
         result
     } else {
         vec![]

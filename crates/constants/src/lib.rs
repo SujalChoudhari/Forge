@@ -15,7 +15,7 @@ pub const MAC_STRING: &str = "mac";
 
 pub const OS_KEY: &str = "on";
 pub const DETECT_KEY: &str = "detect";
-pub const COMMANDS_KEY: &str = "run";
+pub const RUN_KEY: &str = "run";
 pub const VARIABLES_KEY: &str = "vars";
 pub const ALWAYS_KEY: &str = "always";
 pub const OS_VARIABLE_NAME: &str = "os";
