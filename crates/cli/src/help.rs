@@ -29,6 +29,7 @@ pub fn print_help_message() {
         APP_FILENAME
     );
     commands.insert("forge add", &add_command_description);
+    commands.insert("forge help", "Shows this menu.");
 
     let mut internal_vars = HashMap::new();
     internal_vars.insert(

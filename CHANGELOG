@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changelog
 - Workspace System (Codebase)
 - Added `add` and added `add` in `help` menu.
+- Added `help` command (also in help menu).
 
 ### Fixed
 - Wrong name in COMMAND: renamed FrogeFile to Forge.

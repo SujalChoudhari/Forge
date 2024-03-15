@@ -12,7 +12,7 @@ use filetime::FileTime;
 use interpreter::{
     get_commands, get_dependencies, get_job, get_operating_systems, get_run_always, get_variables,
 };
-use logger::{info, start, warn, IS_VERBOSE};
+use logger::{error, info, start, warn, IS_VERBOSE};
 use parser::load_forge;
 use variable::Variables;
 use yaml_rust::Yaml;
@@ -91,6 +91,12 @@ impl Forger {
     }
 
     fn collect(&mut self) {
+        // check for recipes, is cli handled?
+        if handle_cli_command(&self.arguments.nameless) {
+            self.can_run_job = false;
+            return;
+        };
+
         // load forge file
         let all_reciepe = load_forge(&self.forge_file_path);
 
@@ -105,8 +111,7 @@ impl Forger {
         if let Some(returned_job) = get_job(all_reciepe, recipe_name.to_owned()) {
             self.job = returned_job;
         } else {
-            self.job = Yaml::Null;
-            handle_cli_command(&recipe_name);
+            error(&["Recipe \"", &recipe_name, "\" does not exist."].concat())
         };
 
         // get the changed files

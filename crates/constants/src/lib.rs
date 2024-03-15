@@ -1,5 +1,6 @@
 pub const APP_NAME: &str = " Forge ";
 pub const APP_VERSION: &str = "1.0.0-pre-release.2";
+pub const APP_HOMEPAGE: &str = "https://github.com/SujalChoudhari/Forge";
 pub const APP_SUBTITLE: &str =
     "🔨 Thanks for using Forge. ⭐ Star on github: https://github.com/SujalChoudhari/Forge";
 pub const APP_FILENAME: &str = "ForgeFile";

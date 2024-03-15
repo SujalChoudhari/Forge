@@ -59,6 +59,7 @@ impl Arguments {
         args
     }
 
+    /// Check if the given flag is set or not
     pub fn is_flag_set(&self, flag: (&str, &str)) -> bool {
         self.flags.contains(&flag.0.to_string()) || self.flags.contains(&flag.1.to_string())
     }
