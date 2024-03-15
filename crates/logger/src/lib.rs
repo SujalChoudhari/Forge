@@ -96,7 +96,7 @@ fn get_log_tag(log_type: &LogType) -> ColoredString {
     let (tag, color) = match log_type {
         LogType::INFO => (INFORMATION_TAG, (0, 255, 0)),
         LogType::INPUT => (INPUT_TAG, (0, 150, 255)),
-        LogType::WARN => (WARNING_TAG, (0, 255, 255)),
+        LogType::WARN => (WARNING_TAG, (255, 255, 0)),
         LogType::ERROR => (ERROR_TAG, (255, 0, 0)),
     };
     tag.bold()
