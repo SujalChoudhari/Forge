@@ -21,7 +21,7 @@ use logger::{error, intermidiate_error, intermidiate_info, warn};
 pub fn execute(command: &str) -> Result<String, String> {
     let mut is_error = false;
     let command_result = if cfg!(target_os = "windows") {
-        Command::new("cmd").arg("/C").arg(command).output()
+        Command::new("powershell").arg("-Command").arg(command).output()
     } else {
         Command::new("sh").arg("-c").arg(command).output()
     };

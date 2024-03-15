@@ -6,10 +6,14 @@ build:
 
   - win
   - copy .\\target\\release\\forge.exe .\\forge_{version}_win.exe
+  - Get-FileHash .\\forge_{version}_win.exe > .\\sha256_{version}_win.txt
 
   - mac 
   - cp ./target/release/forge ./forge_{version}_mac.so
+  - sha256sum ./forge_{version}_mac.so > ./sha256_{version}_mac.txt
 
   - linux
   - cp ./target/release/forge ./forge_{version}_linux.so
+  - sha256sum ./forge_{version}_linux.so > ./sha256_{version}_linux.txt
+
 
