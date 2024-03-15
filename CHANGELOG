@@ -1,0 +1,36 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## 1.0.0-Pre-Release.3
+### Added
+- Changelog
+- Workspace System (Codebase), moved from project system to workspace system, `crates/forge` being the entry point.
+- Added `add` and added `add` in `help` menu for adding workflows in `ForgeFile`
+- Added `help` command (also in help menu).
+- `help`,`--help` and `-h` supports `-V` flag for verbose output.
+
+### Fixed
+- Wrong name in COMMAND: renamed FrogeFile to Forge.
+- Inputed variables are now saved in storage.
+
+### Changed
+- renamed `forge` file to `ForgeFile` as forge will be the main entry point.
+- `input` takes input from user if none, returns `default`
+
+## 1.0.0-Pre-Release.2
+### Added
+- Help menu (-h, -help)
+- -f, --force flag
+- -v,--version flag
+- -V, --verbose flag 
+
+### Fixed 
+- Unintentional errors in execution.
+
+## 1.0.0-Pre-Release.1
+### Added
+- Forge 

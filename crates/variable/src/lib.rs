@@ -1,13 +1,12 @@
 use regex::Regex;
-use std::io;
 use std::{collections::HashMap, vec};
 
-use crate::constants::{
+use constants::{
     FILE_DIR_VARIABLE_NAME, FILE_EXT_VARIABLE_NAME, FILE_NAME_EXT_VARIABLE_NAME,
     FILE_NAME_VARIABLE_NAME, FILE_PATH_VARIABLE_NAME, VARIABLE_REPLACE_TEMPLATE,
     VARIABLE_REPLACE_WITH_INDEX_TEMPLATE,
 };
-use crate::logging::input;
+use logger::input;
 
 #[derive(Debug)]
 pub struct Variables {
@@ -241,12 +240,9 @@ impl Variables {
             if self.exists(&placeholder.to_string()) {
                 continue;
             }
-            input(&["\nEnter ", placeholder, ":"].concat());
-            let mut input = String::new();
-            io::stdin()
-                .read_line(&mut input)
-                .expect("Failed to read line");
-            let trimmed_input = input.trim().to_string();
+
+            let trimmed_input = input(&["\nEnter ", placeholder, ":"].concat(), "forge");
+            self.add(placeholder.to_owned(), trimmed_input.to_owned());
             replacements.push((format!("{{{}}}", placeholder), trimmed_input));
         }
 

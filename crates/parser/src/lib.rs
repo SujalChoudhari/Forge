@@ -2,7 +2,7 @@ extern crate yaml_rust;
 use std::fs;
 use yaml_rust::{Yaml, YamlLoader};
 
-use crate::logging::error;
+use logger::error;
 
 pub fn load_forge(filename: &str) -> Yaml {
     let contents = load_contents_of_file(filename);

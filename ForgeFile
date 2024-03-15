@@ -1,13 +1,15 @@
+# Generated using forge add. 🔨 Thanks for using Forge. ⭐ Star on github: https://github.com/SujalChoudhari/Forge
 build:
   always: true
   run:
   - cargo build --release
 
   - win
-  - copy .\\target\\release\\forge.exe .forge_{version}_win.exe
+  - copy .\\target\\release\\forge.exe .\\forge_{version}_win.exe
 
   - mac 
   - cp ./target/release/forge ./forge_{version}_mac.so
 
   - linux
   - cp ./target/release/forge ./forge_{version}_linux.so
+

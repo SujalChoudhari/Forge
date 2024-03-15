@@ -1,25 +1,21 @@
 use std::{path::PathBuf, time::SystemTime};
 
-use filetime::FileTime;
-use yaml_rust::Yaml;
-
-use crate::{
-    argparser::Arguments,
-    commander::execute,
-    constants::*,
-    filehandler::{
-        get_changed_files, get_files_in_directory_with_criteria, get_last_modified_of_files,
-        update_last_modified_of_files,
-    },
-    help::print_help_message,
-    interpreter::{
-        get_commands, get_dependencies, get_job, get_operating_systems, get_run_always,
-        get_variables,
-    },
-    logging::{info, start, warn, IS_VERBOSE},
-    parser::load_forge,
-    variables::Variables,
+use argparser::Arguments;
+use cli::{handle_cli_command, help::print_help_message};
+use commander::execute;
+use constants::*;
+use filehandler::{
+    get_changed_files, get_files_in_directory_with_criteria, get_last_modified_of_files,
+    update_last_modified_of_files,
 };
+use filetime::FileTime;
+use interpreter::{
+    get_commands, get_dependencies, get_job, get_operating_systems, get_run_always, get_variables,
+};
+use logger::{error, info, start, warn, IS_VERBOSE};
+use parser::load_forge;
+use variable::Variables;
+use yaml_rust::Yaml;
 
 #[derive(Debug)]
 pub struct Forger {
@@ -32,7 +28,6 @@ pub struct Forger {
     commands_to_run: Vec<String>,
     can_run_job: bool,
 }
-
 pub static mut IS_FORCE_EXECUTE_ALL: bool = false;
 
 impl Forger {
@@ -96,6 +91,12 @@ impl Forger {
     }
 
     fn collect(&mut self) {
+        // check for recipes, is cli handled?
+        if handle_cli_command(&self.arguments.nameless) {
+            self.can_run_job = false;
+            return;
+        };
+
         // load forge file
         let all_reciepe = load_forge(&self.forge_file_path);
 
@@ -107,7 +108,11 @@ impl Forger {
         };
 
         // extract the needed recipe
-        self.job = get_job(all_reciepe, recipe_name.to_owned());
+        if let Some(returned_job) = get_job(all_reciepe, recipe_name.to_owned()) {
+            self.job = returned_job;
+        } else {
+            error(&["Recipe \"", &recipe_name, "\" does not exist."].concat())
+        };
 
         // get the changed files
         let detectable_files_from_user = get_dependencies(&self.job);

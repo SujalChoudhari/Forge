@@ -1,29 +1,30 @@
-use crate::{
-    constants::{
-        ALWAYS_KEY, COMMANDS_KEY, DEFAULT_DETECT_PATTERN, DETECT_KEY, LINUX_STRING, MAC_STRING,
-        OS_KEY, VARIABLES_KEY, WIN_STRING,
-    },
-    logging::error,
+use logger::error;
+
+use constants::{
+    ALWAYS_KEY, RUN_KEY, DEFAULT_DETECT_PATTERN, DETECT_KEY, LINUX_STRING, MAC_STRING, OS_KEY,
+    VARIABLES_KEY, WIN_STRING,
 };
 use std::{collections::HashMap, vec};
 use yaml_rust::Yaml;
 
-pub fn get_job(yaml: Yaml, job_name: String) -> Yaml {
+pub fn get_job(yaml: Yaml, job_name: String) -> Option<Yaml> {
     let result = match yaml {
         Yaml::Hash(map) => {
             if map.contains_key(&Yaml::String(job_name.to_owned())) {
                 map[&Yaml::String(job_name.to_owned())].clone()
             } else {
-                error(&["Job \"", &job_name, "\" does not exist."].concat());
-                Yaml::Null
+                // error(&["Job \"", &job_name, "\" does not exist."].concat());
+                // Yaml::Null
+                return Option::None;
             }
         }
         _ => {
-            error("Forge is empty.");
-            Yaml::Null
+            // error("Forge is empty.");
+            // Yaml::Null
+            return Option::None;
         }
     };
-    result
+    Option::Some(result)
 }
 
 pub fn get_operating_systems(yaml: &Yaml) -> Vec<String> {
@@ -77,7 +78,7 @@ pub fn get_run_always(yaml: &Yaml) -> bool {
 }
 
 pub fn get_commands(yaml: &Yaml) -> Vec<String> {
-    if let Some(result) = get_list_or_string(yaml, COMMANDS_KEY.to_string()) {
+    if let Some(result) = get_list_or_string(yaml, RUN_KEY.to_string()) {
         result
     } else {
         vec![]
