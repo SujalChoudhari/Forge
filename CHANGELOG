@@ -8,9 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 1.0.0-Pre-Release.3
 ### Added
 - Changelog
-- Workspace System (Codebase)
-- Added `add` and added `add` in `help` menu.
+- Workspace System (Codebase), moved from project system to workspace system, `crates/forge` being the entry point.
+- Added `add` and added `add` in `help` menu for adding workflows in `ForgeFile`
 - Added `help` command (also in help menu).
+- `help`,`--help` and `-h` supports `-V` flag for verbose output.
 
 ### Fixed
 - Wrong name in COMMAND: renamed FrogeFile to Forge.
