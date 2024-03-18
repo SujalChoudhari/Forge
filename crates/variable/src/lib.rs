@@ -244,7 +244,7 @@ impl Variables {
                 continue;
             }
 
-            let trimmed_input = Logger::input(&["\nEnter ", placeholder, ":"].concat(), "forge");
+            let trimmed_input = Logger::input_default(&["\nEnter ", placeholder, ":"].concat(), "forge");
             self.add(placeholder.to_owned(), &trimmed_input);
             replacements.push((format!("{{{}}}", placeholder), trimmed_input));
         }

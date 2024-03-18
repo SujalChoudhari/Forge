@@ -1,14 +1,14 @@
 use colored::{ColoredString, Colorize};
 use constants::{
-    APP_NAME, APP_SUBTITLE, APP_VERSION, ERROR_TAG, INFORMATION_TAG, INPUT_TAG, WARNING_TAG,
+    APP_NAME, APP_SUBTITLE, APP_VERSION, ERROR_TAG, INFORMATION_TAG, WARNING_TAG,
 };
+use inquire::{validator, MultiSelect};
+use inquire::{Autocomplete, Select, Text};
 use lazy_static::lazy_static;
-use std::io::{self, Write};
-use std::sync::RwLock;
 use std::sync::Arc;
+use std::sync::RwLock;
 #[derive(Debug)]
 enum LogType {
-    INPUT,
     INFO,
     WARN,
     ERROR,
@@ -19,7 +19,8 @@ pub struct Logger {
 }
 
 lazy_static! {
-    pub static ref INSTANCE: Arc<RwLock<Logger>> = Arc::new(RwLock::new(Logger { is_verbose: false }));
+    pub static ref INSTANCE: Arc<RwLock<Logger>> =
+        Arc::new(RwLock::new(Logger { is_verbose: false }));
 }
 
 impl Logger {
@@ -57,26 +58,80 @@ impl Logger {
         Logger::log(LogType::INFO, message);
     }
 
-    pub fn input(prompt: &str, default: &str) -> String {
-        let info_tag = Logger::get_log_tag(&LogType::INPUT);
-        let time_string = Logger::get_time_colored();
-        print!(
-            "{info_tag} {time_string}: {} ({}) >> ",
-            prompt,
-            default.truecolor(100, 100, 100)
-        );
-        io::stdout().flush().expect("Failed to flush stdout");
+    pub fn input_autocomplete(prompt: &str, list: Vec<&str>) -> String {
+        let auto_complete_list: Vec<String> =
+            list.iter().map(|val| val.to_owned().to_string()).collect();
 
-        let mut input = String::new();
-        io::stdin()
-            .read_line(&mut input)
-            .expect("Failed to read input");
+        // Create a custom autocomplete trait implementation
+        #[derive(Clone)]
+        struct CustomAutocomplete {
+            suggestions: Vec<String>,
+        }
 
-        let input = input.trim();
-        if input.is_empty() {
-            default.to_string()
-        } else {
-            input.to_string()
+        impl Autocomplete for CustomAutocomplete {
+            fn get_suggestions(
+                &mut self,
+                input: &str,
+            ) -> Result<Vec<String>, Box<(dyn std::error::Error + Send + Sync + 'static)>>
+            {
+                let res = self
+                    .suggestions
+                    .iter()
+                    .filter(|s| s.starts_with(input))
+                    .cloned()
+                    .collect();
+                return Result::Ok(res);
+            }
+
+            fn get_completion(
+                &mut self,
+                _: &str,
+                _: Option<String>,
+            ) -> Result<Option<String>, Box<(dyn std::error::Error + Send + Sync + 'static)>>
+            {
+                Result::Ok(None)
+            }
+        }
+
+        let autocomplete = CustomAutocomplete {
+            suggestions: auto_complete_list,
+        };
+
+        let result = Text::new(prompt)
+            .with_validator(validator::ValueRequiredValidator::new("Cannot be empty"))
+            .with_autocomplete(autocomplete)
+            .prompt();
+
+        match result {
+            Ok(value) => value,
+            Err(_) => "".to_string(), // Return empty string on error
+        }
+    }
+
+    pub fn input_default(prompt: &str, default: &str) -> String {
+        let result = Text::new(prompt).with_default(default).prompt();
+
+        match result {
+            Ok(value) => value,
+            Err(_) => default.to_string(), // Return default value on error
+        }
+    }
+
+    pub fn input_choice(prompt: &str, choices: Vec<&str>) -> String {
+        let result = Select::new(prompt, choices).prompt();
+
+        match result {
+            Ok(value) => value.to_string(),
+            Err(_) => "".to_string(), // Return empty string on error
+        }
+    }
+
+    pub fn input_multiselect(prompt: &str, choices: Vec<&str>) -> Vec<String> {
+        let result = MultiSelect::new(prompt, choices).prompt();
+
+        match result {
+            Ok(selections) => selections.iter().map(|string| string.to_string()).collect(),
+            Err(_) => Vec::new(), // Return empty vector on error
         }
     }
 
@@ -112,7 +167,6 @@ impl Logger {
     fn get_log_tag(log_type: &LogType) -> ColoredString {
         let (tag, color) = match log_type {
             LogType::INFO => (INFORMATION_TAG, (0, 255, 0)),
-            LogType::INPUT => (INPUT_TAG, (0, 150, 255)),
             LogType::WARN => (WARNING_TAG, (255, 255, 0)),
             LogType::ERROR => (ERROR_TAG, (255, 0, 0)),
         };
@@ -131,7 +185,6 @@ impl Logger {
                 time_string = time_string,
                 message = message
             ),
-            LogType::INPUT => (), // nothing to log for input
             LogType::WARN | LogType::ERROR => eprintln!(
                 "{info_tag} {time_string}: {message}",
                 info_tag = info_tag,
@@ -156,5 +209,4 @@ impl Logger {
             println!("{info_tag}: {title}", info_tag = info_tag, title = title);
         }
     }
-
 }

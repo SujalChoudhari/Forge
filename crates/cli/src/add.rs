@@ -3,6 +3,7 @@ use logger::Logger;
 use std::collections::HashMap;
 use std::fs::OpenOptions;
 use std::io::Write;
+use std::vec;
 
 pub fn add_recipe_to_forge(
     name: &str,
@@ -33,28 +34,33 @@ pub fn add_recipe_to_forge(
 
 pub fn add_recipe_to_forge_from_user() {
     // Ask user for recipe name
-    let name = Logger::input("Enter recipe name: ", "forge");
+    let name = Logger::input_autocomplete(
+        "Enter recipe name: ",
+        vec!["forge", "build", "push", "add", "test"],
+    );
 
     // Ask user for list of operating systems
-    let os_input = Logger::input("Enter list of operating systems (comma-separated): ", "all");
-    let os: Vec<String> = os_input.split(',').map(|s| s.trim().to_owned()).collect();
+    let os: Vec<String> = Logger::input_multiselect(
+        "Select operating systems to run this recipe on: ",
+        vec!["all", "win", "mac", "linux"],
+    );
 
     // Ask user for list of detection parameters
-    let detect_input = Logger::input(
-        "Enter list of detection parameters (comma-separated): ",
-        "*",
+    let detect = Logger::input_multiselect(
+        "Enter select detection parameters: ",
+        vec!["*", "src/", "*.rs", "*.js", "test/", "dist/", "*.py"],
     );
-    let detect: Vec<String> = detect_input
-        .split(',')
-        .map(|s| s.trim().to_owned())
-        .collect();
 
     // Ask user for 'always' flag
-    let always_input = Logger::input("Should the recipe always run? (true/false): ", "true");
+    let always_input = Logger::input_choice(
+        "Should the recipe always run?: ",
+        vec!["true", "false"],
+    );
     let always = always_input.trim().parse().unwrap_or(true);
 
     // Ask user for variables
-    let vars_input = Logger::input("Enter variables (key-value pairs separated by comma): ", "");
+    let vars_input =
+        Logger::input_default("Enter variables (key-value pairs separated by comma): ", "");
     let vars: HashMap<String, String> = if !vars_input.trim().is_empty() {
         vars_input
             .split(',')
@@ -70,7 +76,7 @@ pub fn add_recipe_to_forge_from_user() {
     };
 
     // Ask user for list of commands to run
-    let run_input = Logger::input(
+    let run_input = Logger::input_default(
         "Enter list of commands to run (comma-separated): ",
         "echo forge",
     );

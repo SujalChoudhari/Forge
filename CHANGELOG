@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## 1.0.0-Pre-Release.4 [Unreleased]
+### Added
+- `inquire` for input handling
+- defaults and multiselect for os and detect params
 
 ### Changed
 - `powershell` is the default shell in windows, use `cmd /C` prefix to change therminal to cmd. 
@@ -13,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - unsafe `FORCE_EXECUTE_ALL` removed, replaced with a public value of struct `Forger`
 - unsafe `IS_VERBOSE` is replaced by lazy static `get_is_verbose` and `set_is_verbose`.
 
+### Removed
+- useage of `input` tag is reduced.
+- `LogType::INPUT` is removed.  
 
 ## 1.0.0-Pre-Release.3
 ### Added
