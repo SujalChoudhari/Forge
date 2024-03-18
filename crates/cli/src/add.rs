@@ -1,5 +1,5 @@
 use constants::{ALWAYS_KEY, APP_SUBTITLE, DETECT_KEY, OS_KEY, RUN_KEY, VARIABLES_KEY};
-use logger::{info, input};
+use logger::Logger;
 use std::collections::HashMap;
 use std::fs::OpenOptions;
 use std::io::Write;
@@ -33,14 +33,14 @@ pub fn add_recipe_to_forge(
 
 pub fn add_recipe_to_forge_from_user() {
     // Ask user for recipe name
-    let name = input("Enter recipe name: ", "forge");
+    let name = Logger::input("Enter recipe name: ", "forge");
 
     // Ask user for list of operating systems
-    let os_input = input("Enter list of operating systems (comma-separated): ", "all");
+    let os_input = Logger::input("Enter list of operating systems (comma-separated): ", "all");
     let os: Vec<String> = os_input.split(',').map(|s| s.trim().to_owned()).collect();
 
     // Ask user for list of detection parameters
-    let detect_input = input(
+    let detect_input = Logger::input(
         "Enter list of detection parameters (comma-separated): ",
         "*",
     );
@@ -50,11 +50,11 @@ pub fn add_recipe_to_forge_from_user() {
         .collect();
 
     // Ask user for 'always' flag
-    let always_input = input("Should the recipe always run? (true/false): ", "true");
+    let always_input = Logger::input("Should the recipe always run? (true/false): ", "true");
     let always = always_input.trim().parse().unwrap_or(true);
 
     // Ask user for variables
-    let vars_input = input("Enter variables (key-value pairs separated by comma): ", "");
+    let vars_input = Logger::input("Enter variables (key-value pairs separated by comma): ", "");
     let vars: HashMap<String, String> = if !vars_input.trim().is_empty() {
         vars_input
             .split(',')
@@ -70,13 +70,13 @@ pub fn add_recipe_to_forge_from_user() {
     };
 
     // Ask user for list of commands to run
-    let run_input = input(
+    let run_input = Logger::input(
         "Enter list of commands to run (comma-separated): ",
         "echo forge",
     );
     let run: Vec<String> = run_input.split(',').map(|s| s.trim().to_owned()).collect();
 
     // Call add_recipe_to_forge function with user-provided inputs
-    info(&["Recipe ", &name, " is added."].concat());
+    Logger::info(&["Recipe ", &name, " is added."].concat());
     add_recipe_to_forge(&name, os, detect, always, vars, run);
 }

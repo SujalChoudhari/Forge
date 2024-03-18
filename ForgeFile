@@ -16,4 +16,3 @@ build:
   - cp ./target/release/forge ./forge_{version}_linux.so
   - sha256sum ./forge_{version}_linux.so > ./sha256_{version}_linux.txt
 
-

@@ -1,6 +1,6 @@
 use colored::Colorize;
 use constants::*;
-use logger::IS_VERBOSE;
+use logger::Logger;
 use std::collections::HashMap;
 
 pub fn print_help_message() {
@@ -24,7 +24,7 @@ pub fn print_help_message() {
     );
 
     let add_command_description = format!(
-    "Adds a recipe to the current {} 
+        "Adds a recipe to the current {} 
     \t\t\t\tQuestions will be asked for initializing",
         APP_FILENAME
     );
@@ -107,7 +107,7 @@ fn print_help_message_raw(
         );
     }
 
-    if unsafe { IS_VERBOSE } {
+    if Logger::get_is_verbose() {
         // Print VARIABLE REPLACEMENT, DETECTION PATTERN, FILE PATH, DEFAULT RECIPE, DEFAULT DIRECTORY, and SEE ALSO sections
         println!(
             "\n    {}:{}",

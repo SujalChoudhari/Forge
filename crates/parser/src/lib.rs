@@ -2,7 +2,7 @@ extern crate yaml_rust;
 use std::fs;
 use yaml_rust::{Yaml, YamlLoader};
 
-use logger::error;
+use logger::Logger;
 
 pub fn load_forge(filename: &str) -> Yaml {
     let contents = load_contents_of_file(filename);
@@ -17,12 +17,12 @@ fn load_contents_of_file(file_path: &str) -> String {
             data = val.to_string();
             if val.len() > 0 {
             } else {
-                error("Forge is empty");
+                Logger::error("Forge is empty");
             }
         }
         Err(_) => {
             let printable_path = file_path;
-            error(&["Cannot open the \"", printable_path, "\" file"].concat());
+            Logger::error(&["Cannot open the \"", printable_path, "\" file"].concat());
             data = String::new();
         }
     };
@@ -38,7 +38,7 @@ fn parse_string_into_objects(file_contents: &String) -> Yaml {
             data = val[0].clone();
         }
         Err(_) => {
-            error("Cannot Parse data as Yaml");
+            Logger::error("Cannot Parse data as Yaml");
             data = Yaml::Null;
         }
     };

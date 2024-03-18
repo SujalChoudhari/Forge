@@ -1,7 +1,7 @@
 use std::process::Command;
 use std::string::String;
 
-use logger::{error, intermidiate_error, intermidiate_info, warn};
+use logger::Logger;
 
 /// Executes the given command on the current operating system.
 /// This function is platform-independent.
@@ -20,11 +20,15 @@ use logger::{error, intermidiate_error, intermidiate_info, warn};
 
 pub fn execute(command: &str) -> Result<String, String> {
     let mut is_error = false;
-    let command_result = if cfg!(target_os = "windows") {
-        Command::new("powershell").arg("-Command").arg(command).output()
-    } else {
-        Command::new("sh").arg("-c").arg(command).output()
-    };
+    let command_result: Result<std::process::Output, std::io::Error> =
+        if cfg!(target_os = "windows") {
+            Command::new("powershell")
+                .arg("-Command")
+                .arg(command)
+                .output()
+        } else {
+            Command::new("sh").arg("-c").arg(command).output()
+        };
 
     let raw_output;
     match command_result {
@@ -39,7 +43,7 @@ pub fn execute(command: &str) -> Result<String, String> {
             }
         }
         Result::Err(_) => {
-            error(&["Cannot run \"", command, "\" on current OS"].concat());
+            Logger::error(&["Cannot run \"", command, "\" on current OS"].concat());
             raw_output = vec![];
         }
     };
@@ -48,15 +52,15 @@ pub fn execute(command: &str) -> Result<String, String> {
     match String::from_utf8(raw_output) {
         Ok(ok) => viewable_output = ok,
         Err(_) => {
-            warn("Cannot convert output to viewable string.");
+            Logger::warn("Cannot convert output to viewable string.");
             viewable_output = String::new();
         }
     };
 
     if is_error {
-        intermidiate_error(command, &viewable_output);
+        Logger::intermidiate_error(command, &viewable_output);
         return Result::Err(viewable_output);
     }
-    intermidiate_info(command, &viewable_output);
+    Logger::intermidiate_info(command, &viewable_output);
     Result::Ok(viewable_output)
 }
