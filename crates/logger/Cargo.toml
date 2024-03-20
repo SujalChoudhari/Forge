@@ -10,3 +10,5 @@ constants = {path = "../constants"}
 
 colored = "2.1.0"
 chrono = "0.4.35"
+lazy_static = "1.4.0"
+inquire = "0.7.2"

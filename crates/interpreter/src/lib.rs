@@ -1,4 +1,4 @@
-use logger::error;
+use logger::Logger;
 
 use constants::{
     ALWAYS_KEY, RUN_KEY, DEFAULT_DETECT_PATTERN, DETECT_KEY, LINUX_STRING, MAC_STRING, OS_KEY,
@@ -13,13 +13,13 @@ pub fn get_job(yaml: Yaml, job_name: String) -> Option<Yaml> {
             if map.contains_key(&Yaml::String(job_name.to_owned())) {
                 map[&Yaml::String(job_name.to_owned())].clone()
             } else {
-                // error(&["Job \"", &job_name, "\" does not exist."].concat());
+                // Logger::error(&["Job \"", &job_name, "\" does not exist."].concat());
                 // Yaml::Null
                 return Option::None;
             }
         }
         _ => {
-            // error("Forge is empty.");
+            // Logger::error("Forge is empty.");
             // Yaml::Null
             return Option::None;
         }
@@ -57,7 +57,7 @@ pub fn get_run_always(yaml: &Yaml) -> bool {
                     Yaml::Boolean(boolean) => {
                         return boolean;
                     }
-                    _ => error(
+                    _ => Logger::error(
                         &[
                             "Non Boolean found in \"",
                             &ALWAYS_KEY,
@@ -107,7 +107,7 @@ fn get_key_value_pairs(yaml: &Yaml, keyword: String) -> Option<HashMap<String, V
                             let variable_key = match key {
                                 Yaml::String(raw_str) => raw_str,
                                 _ => {
-                                    error(&["Non String key found in \"", &keyword, "\""].concat());
+                                    Logger::error(&["Non String key found in \"", &keyword, "\""].concat());
                                     "".to_string()
                                 }
                             };
@@ -118,7 +118,7 @@ fn get_key_value_pairs(yaml: &Yaml, keyword: String) -> Option<HashMap<String, V
                                     for value in array {
                                         match value {
                                             Yaml::String(str) => value_array.push(str),
-                                            _ => error(
+                                            _ => Logger::error(
                                                 &[
                                                     "Non String found in Matrix in \"",
                                                     &variable_key,
@@ -133,7 +133,7 @@ fn get_key_value_pairs(yaml: &Yaml, keyword: String) -> Option<HashMap<String, V
                                     value_array
                                 }
                                 _ => {
-                                    error(
+                                    Logger::error(
                                         &[
                                             "Non String found in\"",
                                             &variable_key,
@@ -149,7 +149,7 @@ fn get_key_value_pairs(yaml: &Yaml, keyword: String) -> Option<HashMap<String, V
                             result.insert(variable_key, variable_value);
                         }
                     }
-                    _ => error(&["Non Object found in \"", &keyword, "\""].concat()),
+                    _ => Logger::error(&["Non Object found in \"", &keyword, "\""].concat()),
                 }
             } else {
                 return Option::None;
@@ -176,13 +176,13 @@ fn get_list_or_string(yaml: &Yaml, keyword: String) -> Option<Vec<String>> {
                         for value in array {
                             match value {
                                 Yaml::String(raw_str) => result.push(raw_str),
-                                _ => error(
+                                _ => Logger::error(
                                     &["Non String found in Matrix in \"", &keyword, "\""].concat(),
                                 ),
                             }
                         }
                     }
-                    _ => error(&["Non String found in \"", &keyword, "\""].concat()),
+                    _ => Logger::error(&["Non String found in \"", &keyword, "\""].concat()),
                 }
             } else {
                 return Option::None;

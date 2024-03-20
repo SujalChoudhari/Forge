@@ -6,7 +6,7 @@ use constants::{
     FILE_NAME_VARIABLE_NAME, FILE_PATH_VARIABLE_NAME, VARIABLE_REPLACE_TEMPLATE,
     VARIABLE_REPLACE_WITH_INDEX_TEMPLATE,
 };
-use logger::input;
+use logger::Logger;
 
 #[derive(Debug)]
 pub struct Variables {
@@ -20,15 +20,18 @@ impl Variables {
         }
     }
 
-    pub fn add(&mut self, key: String, value: String) {
+    pub fn add(&mut self, key: String, value: &String) {
         // Insert the key-value pair into the HashMap
-        self.memory.entry(key).or_insert_with(Vec::new).push(value);
+        self.memory
+            .entry(key)
+            .or_insert_with(Vec::new)
+            .push(value.to_owned());
     }
 
     pub fn add_from_hash(&mut self, map: &HashMap<String, Vec<String>>) {
         for (key, values) in map {
             for value in values {
-                self.add(key.clone(), value.clone());
+                self.add(key.clone(), &value);
             }
         }
     }
@@ -241,8 +244,8 @@ impl Variables {
                 continue;
             }
 
-            let trimmed_input = input(&["\nEnter ", placeholder, ":"].concat(), "forge");
-            self.add(placeholder.to_owned(), trimmed_input.to_owned());
+            let trimmed_input = Logger::input_default(&["\nEnter ", placeholder, ":"].concat(), "forge");
+            self.add(placeholder.to_owned(), &trimmed_input);
             replacements.push((format!("{{{}}}", placeholder), trimmed_input));
         }
 

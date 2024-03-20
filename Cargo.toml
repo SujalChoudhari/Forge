@@ -2,13 +2,12 @@
 
 members= [
     "crates/forge",
-    "crates/forger",
+    "crates/application",
     "crates/argparser",
     "crates/cli",
     "crates/commander",
     "crates/constants",
     "crates/filehandler",
-    "crates/forger",
     "crates/interpreter",
     "crates/logger",
     "crates/parser",
