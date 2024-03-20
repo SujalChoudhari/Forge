@@ -1,3 +1,5 @@
+pub mod recipie_templates;
+
 pub const APP_NAME: &str = " Forge ";
 pub const APP_VERSION: &str = "1.0.0-pre-release.3";
 pub const APP_HOMEPAGE: &str = "https://github.com/SujalChoudhari/Forge";

@@ -30,6 +30,7 @@ pub fn print_help_message() {
     );
     commands.insert("forge add", &add_command_description);
     commands.insert("forge help", "Shows this menu.");
+    commands.insert("forge from", "Create a new project from a template. Alias to `template`");
 
     let mut internal_vars = HashMap::new();
     internal_vars.insert(

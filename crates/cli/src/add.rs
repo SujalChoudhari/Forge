@@ -1,4 +1,4 @@
-use constants::{ALWAYS_KEY, APP_SUBTITLE, DETECT_KEY, OS_KEY, RUN_KEY, VARIABLES_KEY};
+use constants::{ALWAYS_KEY, APP_FILENAME_DEFAULT_PATH, APP_SUBTITLE, DETECT_KEY, OS_KEY, RUN_KEY, VARIABLES_KEY};
 use logger::Logger;
 use std::collections::HashMap;
 use std::fs::OpenOptions;
@@ -13,7 +13,6 @@ pub fn add_recipe_to_forge(
     vars: HashMap<String, String>,
     run: Vec<String>,
 ) {
-    let forge_file_path = "./ForgeFile";
 
     // Create a new YAML string for the recipe
     let yaml_string = format!(
@@ -25,7 +24,7 @@ pub fn add_recipe_to_forge(
     let mut forge_file = OpenOptions::new()
         .append(true)
         .create(true)
-        .open(forge_file_path)
+        .open(APP_FILENAME_DEFAULT_PATH)
         .expect("Failed to open ForgeFile");
 
     // Write the YAML string to ForgeFile

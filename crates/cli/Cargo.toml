@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 constants = { path = "../constants"}
 logger = { path = "../logger"}
+filehandler = {path="../filehandler" }
 
 colored = "2.1.0"
 yaml-rust = "0.4.5"

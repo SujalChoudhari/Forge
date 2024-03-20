@@ -2,6 +2,7 @@ use filetime::{set_file_mtime, FileTime};
 use std::fs::{self};
 use std::path::{Path, PathBuf};
 use std::time::SystemTime;
+pub mod read_file;
 
 /// Recursively iterate through all directories and return all the paths
 /// #### Params:

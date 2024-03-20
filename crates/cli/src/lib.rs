@@ -1,9 +1,10 @@
 use add::add_recipe_to_forge_from_user;
 use help::print_help_message;
+use template::run_templating_engine;
 
 pub mod add;
 pub mod help;
-
+pub mod template;
 /// handles cli commands if any
 /// #### Params
 /// - command - [Vec] String: Nameless commands.
@@ -19,6 +20,10 @@ pub fn handle_cli_command(command: &Vec<String>) -> bool {
         }
         "help" => {
             print_help_message();
+            return true;
+        }
+        "template" | "from" => {
+            run_templating_engine();
             return true;
         }
         _ => {

@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `inquire` for input handling
 - defaults and multiselect for os and detect params
+- `template` to use frequently used recipes. (Alias `from`) 
+- Added 19 templates.
 
 ### Changed
 - `powershell` is the default shell in windows, use `cmd /C` prefix to change therminal to cmd. 
