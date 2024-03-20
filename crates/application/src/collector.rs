@@ -42,7 +42,7 @@ impl Collector {
         }
     }
 
-    pub fn collect(&mut self, arguments: &Arguments, variables: &mut Variables) -> bool {
+    pub fn collect(&mut self, arguments: &mut Arguments, variables: &mut Variables) -> bool {
         self.attempt_cli_call(arguments);
 
         if !self.is_forge_call {
@@ -72,8 +72,8 @@ impl Collector {
     }
 
     /// returns false if it was a cli call. and true if it was a forge recipe call.
-    fn attempt_cli_call(&mut self, arguments: &Arguments) {
-        if handle_cli_command(&arguments.nameless) {
+    fn attempt_cli_call(&mut self, arguments: &mut Arguments) {
+        if handle_cli_command(&mut arguments.nameless) {
             self.is_forge_call = false;
         };
     }

@@ -5,12 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 1.0.0-Pre-Release.4 [Unreleased]
+## 1.0.0-Release-Candidate.1
 ### Added
 - `inquire` for input handling
 - defaults and multiselect for os and detect params
 - `template` to use frequently used recipes. (Alias `from`) 
-- Added 19 templates.
+- Added 19 templates for `template`
+- Added `menu` for selecting and running existing recipes from the `ForgeFile`
 
 ### Changed
 - `powershell` is the default shell in windows, use `cmd /C` prefix to change therminal to cmd. 

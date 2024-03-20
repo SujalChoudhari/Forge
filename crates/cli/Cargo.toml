@@ -9,6 +9,7 @@ edition = "2021"
 constants = { path = "../constants"}
 logger = { path = "../logger"}
 filehandler = {path="../filehandler" }
+parser = {path = "../parser"}
 
 colored = "2.1.0"
 yaml-rust = "0.4.5"

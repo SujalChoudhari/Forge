@@ -38,7 +38,7 @@ impl Application {
         // check for code should continue execution
         if self.process_flags_and_options() {
             Logger::start();
-            self.collector.collect(&self.arguments, &mut self.variables);
+            self.collector.collect(&mut self.arguments, &mut self.variables);
             self.engraver
                 .engrave(&self.arguments, &mut self.variables, &self.collector.job);
             self.forger
