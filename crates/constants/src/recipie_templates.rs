@@ -6,7 +6,7 @@ pub fn recipe_templates() -> HashMap<&'static str, &'static str> {
 build:
   always: true
   vars: 
-  - name : forge
+    name : forge
   run:
     - cargo build --release
 
