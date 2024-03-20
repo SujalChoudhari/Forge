@@ -19,27 +19,21 @@ Forge is a powerful command-line tool written in Rust that simplifies the execut
 
 A Forge file consists of sections that define various aspects of task execution. Here's a breakdown of the available sections:
 
-**1. `forge`:**
+- You can define multiple recipes in your Forge file, each with a unique name.
+- A recipe is a section that specifies how a particular task should be executed. It can have the following subsections:
 
-   - This section serves as the default recipe that runs when you execute `ForgeFile` without specifying a recipe name.
-   - Consider including commonly used tasks or a starting point for your workflows here.
-
-**2. Recipe Definitions:**
-   - You can define multiple recipes in your Forge file, each with a unique name.
-   - A recipe is a section that specifies how a particular task should be executed. It can have the following subsections:
-
-     * **`on` (Optional):**
-       - An array of strings that determines on which operating systems the recipe should run. Valid options include:
-         - `"linux"`
-         - `"win"`
-         - `"mac"`
-         - `"all"` (to run on all supported systems)
-     * **`detect` (Optional):**
-       - An array of file patterns that trigger the recipe when a file matching these patterns changes. You can use the wildcard character `*` to match any filename.
-     * **`always` (Optional):**
-       - A boolean flag (default: `false`). If set to `true`, the recipe runs regardless of file changes or operating system conditions.
-     * **`run` (Required):**
-       - An array of strings representing the commands to execute for this recipe. You can use variables within commands (explained in the Variables section).
+  * **`on` (Optional):**
+    - An array of strings that determines on which operating systems the recipe should run. Valid options include:
+      - `"linux"`
+      - `"win"`
+      - `"mac"`
+      - `"all"` (to run on all supported systems)
+  * **`detect` (Optional):**
+    - An array of file patterns that trigger the recipe when a file matching these patterns changes. You can use the wildcard character `*` to match any filename.
+  * **`always` (Optional):**
+    - A boolean flag (default: `false`). If set to `true`, the recipe runs regardless of file changes or operating system conditions.
+  * **`run` (Required):**
+    - An array of strings representing the commands to execute for this recipe. You can use variables within commands (explained in the Variables section).
 
 
 ## Variables
